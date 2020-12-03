@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"os"
 	"strconv"
@@ -9,38 +10,53 @@ import (
 )
 
 func main() {
-	day := 0
-	part := 1
-	if len(os.Args) > 1 {
-		d, err := strconv.Atoi(os.Args[1])
-		if err != nil {
-			fmt.Printf("ERROR: Unknown Day: '%s'\n", os.Args[1])
-			os.Exit(1)
-		}
-		day = d
-	}
-	if len(os.Args) > 2 {
-		part, _ = strconv.Atoi(os.Args[2])
-	}
-	if len(os.Args) > 2 {
-		p, err := strconv.Atoi(os.Args[2])
-		if err != nil {
-			fmt.Printf("ERROR: Unknown Challenge: Day '%d' Part '%s'\n", day, os.Args[2])
-			os.Exit(1)
-		}
-		part = p
-	}
+
+	var day int = 1
+	var part int = 1
+	// var verbose bool
+
+	flag.Usage = printUsage
+	// flag.BoolVar(&verbose, "v", false, "verbose: if enabled, will print debug logs")
+	flag.Parse()
+	parseArgs(&day, &part)
 
 	challenge, err := challenges.GetChallenge(day, part)
 	if err != nil {
-		fmt.Println("Error finding challenge!", err)
-		os.Exit(1)
-	}
-	solution, err := challenge.Run()
-	if err != nil {
-		fmt.Println("Error running challenge!", err)
+		fmt.Fprintln(os.Stderr, fmt.Errorf("The specified day number does not exist!\nError: %w", err))
 		os.Exit(1)
 	}
 
-	fmt.Printf("%s\n====================\nSolution: %s\n====================\n", challenge.Name(), solution)
+	solution, err := challenge.Run()
+	if err != nil {
+		fmt.Fprintln(os.Stderr, fmt.Errorf("Error running challenge!\nError: %w", err))
+		os.Exit(1)
+	}
+
+	fmt.Printf("====================\n%s\n====================\nSolution: %s\n====================\n", challenge.Name(), solution)
+}
+
+func parseArgs(day *int, part *int) {
+	if arg0 := flag.Arg(0); arg0 != "" {
+		d, err := strconv.Atoi(arg0)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "Error: First argument (day) must be a number, got: '%s'\n", arg0)
+			os.Exit(1)
+		}
+		*day = d
+	}
+	if arg1 := flag.Arg(1); arg1 != "" {
+		p, err := strconv.Atoi(arg1)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "Error: Second argument (part) must be a number, got: '%s'\n", arg1)
+			os.Exit(1)
+		}
+		*part = p
+	}
+}
+
+func printUsage() {
+	fmt.Fprintf(os.Stderr, "Usage: %s [OPTIONS] [day] [part]\n", os.Args[0])
+	flag.PrintDefaults()
+	fmt.Fprintf(os.Stderr, "\n [day]\twhich day's challenge to run (integer)\n")
+	fmt.Fprintf(os.Stderr, "[part]\twhich of the specified [day]'s challenges to run (integer)\n")
 }

@@ -5,7 +5,7 @@ This is my garbage attempt at following along with the [Advent of Code](https://
 
 ## To run the challenges:
 
-- install golang 1.14 or later
+- install golang 1.15 or later
 - clone this repo
 - `cd` into the root of the repo
 - run `go run main.go <day> <part>`, where `<day>` is the day number, and `<part>` is which challenge number for that day.
@@ -14,6 +14,6 @@ This is my garbage attempt at following along with the [Advent of Code](https://
 
 ## TODO:
 
-- finish all the challenges, obviously
-- clean up the `main.go` stuff, to use the `flags` package or similar... for parsing args
-- make things more betterer
+- [x] ~~clean up the `main.go` stuff, and use the `flags` package (or similar) for parsing input~~
+- [ ] finish all the challenges, obviously
+- [ ] make things more betterer

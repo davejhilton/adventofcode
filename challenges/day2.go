@@ -15,18 +15,18 @@ func day2_part1(input []string) (string, error) {
 		max, _ := strconv.Atoi(minMaxParts[1])
 		char := strings.Replace(parts[1], ":", "", -1)
 		pwd := parts[2]
-		// fmt.Printf("min: '%d', max: '%d', char: '%s', pwd: '%s'\n", min, max, char, pwd)
 		n := 0
 		for _, c := range pwd {
 			if string(c) == char {
 				n++
 			}
 		}
+		// fmt.Printf("line: '%s', min: '%d', max: '%d', char: '%s', pwd: '%s', matches: '%d', valid: '%v'", line, min, max, char, pwd, n, min <= n && n <= max)
 		if min <= n && n <= max {
 			valid++
 		}
 	}
-	// fmt.Printf("====================\n%d valid password(s)\n====================\n", valid)
+
 	return fmt.Sprintf("%d", valid), nil
 }
 
@@ -51,12 +51,11 @@ func day2_part2(input []string) (string, error) {
 			}
 		}
 
-		// fmt.Printf("idx1: '%d', idx2: '%d', char: '%s', pwd: '%s', valid: '%#v'\n", idx1, idx2, char, pwd, matches == 1)
+		// fmt.Printf("line: '%s', idx1: '%d', idx2: '%d', char: '%s', pwd: '%s', valid: '%#v'\n", line, idx1, idx2, char, pwd, matches == 1)
 		if matches == 1 {
 			valid++
 		}
 	}
-	// fmt.Printf("====================\n%d valid password(s)\n====================\n", valid)
 	return fmt.Sprintf("%d", valid), nil
 }
 
