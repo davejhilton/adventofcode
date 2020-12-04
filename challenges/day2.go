@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"strconv"
 	"strings"
+
+	"github.com/davejhilton/adventofcode2020/log"
 )
 
 func day2_part1(input []string) (string, error) {
@@ -21,7 +23,7 @@ func day2_part1(input []string) (string, error) {
 				n++
 			}
 		}
-		// fmt.Printf("line: '%s', min: '%d', max: '%d', char: '%s', pwd: '%s', matches: '%d', valid: '%v'", line, min, max, char, pwd, n, min <= n && n <= max)
+		log.Debugf("line: '%s', min: '%d', max: '%d', char: '%s', pwd: '%s', matches: '%d', valid: '%v'", line, min, max, char, pwd, n, min <= n && n <= max)
 		if min <= n && n <= max {
 			valid++
 		}
@@ -51,7 +53,7 @@ func day2_part2(input []string) (string, error) {
 			}
 		}
 
-		// fmt.Printf("line: '%s', idx1: '%d', idx2: '%d', char: '%s', pwd: '%s', valid: '%#v'\n", line, idx1, idx2, char, pwd, matches == 1)
+		log.Debugf("line: '%s', idx1: '%d', idx2: '%d', char: '%s', pwd: '%s', valid: '%#v'\n", line, idx1, idx2, char, pwd, matches == 1)
 		if matches == 1 {
 			valid++
 		}

@@ -7,18 +7,24 @@ import (
 	"strconv"
 
 	"github.com/davejhilton/adventofcode2020/challenges"
+	"github.com/davejhilton/adventofcode2020/log"
 )
 
 func main() {
 
 	var day int = 1
 	var part int = 1
-	// var verbose bool
+	var verbose bool
+	var noColor bool
 
 	flag.Usage = printUsage
-	// flag.BoolVar(&verbose, "v", false, "verbose: if enabled, will print debug logs")
+	flag.BoolVar(&verbose, "v", false, "verbose: if enabled, will print debug logs")
+	flag.BoolVar(&noColor, "nocolor", false, "nocolor: if true, debug logs will not have coloring")
 	flag.Parse()
 	parseArgs(&day, &part)
+
+	log.EnableDebugLogs(verbose)
+	log.EnableColors(!noColor)
 
 	challenge, err := challenges.GetChallenge(day, part)
 	if err != nil {

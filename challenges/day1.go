@@ -3,6 +3,8 @@ package challenges
 import (
 	"fmt"
 	"strconv"
+
+	"github.com/davejhilton/adventofcode2020/log"
 )
 
 func day1_part1(input []string) (string, error) {
@@ -14,8 +16,7 @@ func day1_part1(input []string) (string, error) {
 		for j := i + 1; j < len(nums); j++ {
 			v2 := nums[j]
 			if v1+v2 == 2020 {
-				// fmt.Printf("%d + %d = 2020\n", v1, v2)
-				// fmt.Printf("======\n%d\n======\n", v1*v2)
+				log.Debugf("%d + %d = 2020\n", v1, v2)
 				return fmt.Sprintf("%d", v1*v2), nil
 			}
 		}
@@ -35,8 +36,7 @@ func day1_part2(input []string) (string, error) {
 				for k := j + 1; k < len(nums); k++ {
 					v3 := nums[k]
 					if v1+v2+v3 == 2020 {
-						// fmt.Printf("%d (%d) + %d (%d) + %d (%d) = 2020\n", v1, i, v2, j, v3, k)
-						// fmt.Printf("======\n%d\n======\n", v1*v2*v3)
+						log.Debugf("%d (%d) + %d (%d) + %d (%d) = 2020\n", v1, i, v2, j, v3, k)
 						return fmt.Sprintf("%d", v1*v2*v3), nil
 					}
 				}
