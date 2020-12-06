@@ -27,6 +27,10 @@ func EnableColors(enable bool) {
 	enableColors = enable
 }
 
+func Print(msg string) {
+	fmt.Print(msg)
+}
+
 func Printf(msg string, a ...interface{}) {
 	fmt.Printf(msg, a...)
 }
@@ -35,13 +39,19 @@ func Println(a ...interface{}) {
 	fmt.Println(a...)
 }
 
+func Debug(msg string) {
+	if enableDebugMessages {
+		Print(msg)
+	}
+}
+
 func Debugf(msg string, a ...interface{}) {
 	if enableDebugMessages {
 		Printf(msg, a...)
 	}
 }
 
-func Debug(a ...interface{}) {
+func Debugln(a ...interface{}) {
 	if enableDebugMessages {
 		Println(a...)
 	}
