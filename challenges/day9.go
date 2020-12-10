@@ -7,13 +7,19 @@ import (
 	"github.com/davejhilton/adventofcode2020/log"
 )
 
-func day9_part1(input []string) (string, error) {
+func day9_part1(input []string, isExample bool) (string, error) {
 	nums := day9_parseInts(input)
 
+	var i int
+	var window int
 	var result int
-	window := 25
-	i := window
-	for ; i < len(nums); i++ {
+
+	if isExample {
+		window = 5
+	} else {
+		window = 25
+	}
+	for i = window; i < len(nums); i++ {
 		if !day9_checkSum(nums[i], nums[i-window:i]) {
 			result = nums[i]
 			break
@@ -39,10 +45,15 @@ func day9_checkSum(val int, nums []int) bool {
 	return false
 }
 
-func day9_part2(input []string) (string, error) {
+func day9_part2(input []string, isExample bool) (string, error) {
 	nums := day9_parseInts(input)
 
-	target := 2089807806
+	var target int
+	if isExample {
+		target = 127
+	} else {
+		target = 2089807806
+	}
 	first, last := 0, 0
 
 	sum := nums[0]

@@ -9,7 +9,7 @@ import (
 	"github.com/davejhilton/adventofcode2020/log"
 )
 
-func day7_part1(input []string) (string, error) {
+func day7_part1(input []string, isExample bool) (string, error) {
 	// return day7_part1_simple(input)
 	return day7_part1_efficient(input)
 }
@@ -103,7 +103,7 @@ func day7_canContainGold_simple(rules map[string]map[string]int, color string, i
 	return false
 }
 
-func day7_part2(input []string) (string, error) {
+func day7_part2(input []string, isExample bool) (string, error) {
 	rules := day7_parseRules(input)
 	total := 0
 	for color, count := range rules["shiny gold"] {

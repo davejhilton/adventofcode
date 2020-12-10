@@ -8,7 +8,7 @@ import (
 	"github.com/davejhilton/adventofcode2020/log"
 )
 
-func day8_part1(input []string) (string, error) {
+func day8_part1(input []string, isExample bool) (string, error) {
 	program := day8_parseProgram(input)
 	instrNum := 1
 	acc := 0
@@ -48,7 +48,7 @@ func day8_execInstruction(instr day8_instruction, pc int, acc *int) int {
 	return pc + 1
 }
 
-func day8_part2(input []string) (string, error) {
+func day8_part2(input []string, isExample bool) (string, error) {
 	program := day8_parseProgram(input)
 	acc, _ := day8_tryProgram(program, 0, 0, make([]int, len(program)), false, "")
 	return fmt.Sprintf("%d", acc), nil

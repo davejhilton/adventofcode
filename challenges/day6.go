@@ -6,7 +6,7 @@ import (
 	"github.com/davejhilton/adventofcode2020/log"
 )
 
-func day6_part1(input []string) (string, error) {
+func day6_part1(input []string, isExample bool) (string, error) {
 	sum := 0
 	groups := day6_getGroups(input)
 	for i, group := range groups {
@@ -28,7 +28,7 @@ func day6_part1(input []string) (string, error) {
 	return fmt.Sprintf("%d", sum), nil
 }
 
-func day6_part2(input []string) (string, error) {
+func day6_part2(input []string, isExample bool) (string, error) {
 	sum := 0
 	groups := day6_getGroups(input)
 	for g, group := range groups {

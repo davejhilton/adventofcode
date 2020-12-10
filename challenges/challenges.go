@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"strings"
 )
 
 type Challenge struct {
@@ -44,21 +45,26 @@ func registerChallengeFunc(day int, part int, inputFileName string, execFunc cha
 	}
 }
 
-type challengeFunc func(input []string) (string, error)
+type challengeFunc func(input []string, isExample bool) (string, error)
 
-func (c Challenge) Run() (string, error) {
+func (c Challenge) Run(example bool) (string, error) {
 	if c.exec == nil {
 		return "", fmt.Errorf("Unknown Challenge")
 	}
 	var input []string
 	var err error
-	if c.inputFileName != "" {
-		input, err = readInputFile(c.inputFileName)
+	fileName := c.inputFileName
+	if fileName != "" {
+		if example {
+			pre := strings.TrimSuffix(fileName, ".txt")
+			fileName = fmt.Sprintf("%s_example.txt", pre)
+		}
+		input, err = readInputFile(fileName)
 		if err != nil {
 			return "", err
 		}
 	}
-	return c.exec(input)
+	return c.exec(input, example)
 }
 
 func (c Challenge) Name() string {

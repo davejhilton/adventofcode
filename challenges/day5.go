@@ -6,7 +6,7 @@ import (
 	"github.com/davejhilton/adventofcode2020/log"
 )
 
-func day5_part1(input []string) (string, error) {
+func day5_part1(input []string, isExample bool) (string, error) {
 	maxSeat := 0
 	for i, line := range input {
 		log.Debugf("Line %d\n", i)
@@ -19,7 +19,7 @@ func day5_part1(input []string) (string, error) {
 	return fmt.Sprintf("%d", maxSeat), nil
 }
 
-func day5_part2(input []string) (string, error) {
+func day5_part2(input []string, isExample bool) (string, error) {
 	seats := make([]bool, 1027, 1027)
 	for i, line := range input {
 		log.Debugf("Line %d\n", i)

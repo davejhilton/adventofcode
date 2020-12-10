@@ -7,7 +7,7 @@ import (
 	"github.com/davejhilton/adventofcode2020/log"
 )
 
-func day1_part1(input []string) (string, error) {
+func day1_part1(input []string, isExample bool) (string, error) {
 	nums, err := day1_formatInput(input)
 	if err != nil {
 		return "", err
@@ -24,7 +24,7 @@ func day1_part1(input []string) (string, error) {
 	return "", fmt.Errorf("No solution found\n")
 }
 
-func day1_part2(input []string) (string, error) {
+func day1_part2(input []string, isExample bool) (string, error) {
 	nums, err := day1_formatInput(input)
 	if err != nil {
 		return "", err

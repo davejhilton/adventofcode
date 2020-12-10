@@ -16,10 +16,12 @@ func main() {
 	var part int = 1
 	var verbose bool
 	var noColor bool
+	var example bool
 
 	flag.Usage = printUsage
 	flag.BoolVar(&verbose, "v", false, "verbose: if enabled, will print debug logs")
-	flag.BoolVar(&noColor, "nocolor", false, "nocolor: if true, debug logs will not have coloring")
+	flag.BoolVar(&noColor, "n", false, "nocolor: if true, debug logs will not have coloring")
+	flag.BoolVar(&example, "e", false, "example: if true, use the example input file instead")
 	flag.Parse()
 	parseArgs(&day, &part)
 
@@ -32,7 +34,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	solution, err := challenge.Run()
+	solution, err := challenge.Run(example)
 	if err != nil {
 		fmt.Fprintln(os.Stderr, fmt.Errorf("Error running challenge!\nError: %w", err))
 		os.Exit(1)
