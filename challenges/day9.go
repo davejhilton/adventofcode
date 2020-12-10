@@ -9,29 +9,29 @@ import (
 
 func day9_part1(input []string) (string, error) {
 	nums := day9_parseInts(input)
-	log.Debugf("%v\n", nums)
 
-	r := -1
+	var result int
 	window := 25
-
-	for i := window; i < len(nums); i++ {
+	i := window
+	for ; i < len(nums); i++ {
 		if !day9_checkSum(nums[i], nums[i-window:i]) {
-			r = nums[i]
+			result = nums[i]
 			break
 		}
 	}
+	log.Debugf("Result: %d (index %d)\nprev %d:\n%v\n\n", result, i, window, nums[i-window:i])
 
-	return fmt.Sprintf("%d", r), nil
+	return fmt.Sprintf("%d", result), nil
 }
 
 func day9_checkSum(val int, nums []int) bool {
-	log.Debugf("Checking '%d' against: %v\n", val, nums)
 	for i, n := range nums {
 		if n >= val {
 			continue
 		}
 		for _, m := range nums[i+1:] {
 			if m+n == val {
+				log.Debugf("%d + %d = %d\n", n, m, val)
 				return true
 			}
 		}
@@ -43,24 +43,26 @@ func day9_part2(input []string) (string, error) {
 	nums := day9_parseInts(input)
 
 	target := 2089807806
-	f, l := 0, 0
+	first, last := 0, 0
 
 	sum := nums[0]
-	for l < len(nums) {
+	for last < len(nums) {
 		if sum < target {
-			l++
-			sum += nums[l]
+			last++
+			sum += nums[last]
 		} else if sum > target {
-			sum -= nums[f]
-			f++
+			sum -= nums[first]
+			first++
 		} else {
 			break
 		}
 	}
-	log.Debugf("RANGE: %d - %d\n", f, l)
-	log.Debugf("%v\n", nums[f:l+1])
-	sm, lg := int((^uint(0))>>1), 0
-	for i := f; i <= l; i++ {
+
+	log.Debugf("RANGE: nums[%d] - nums[%d]\n", first, last)
+	log.Debugf("%v\n", nums[first:last+1])
+
+	sm, lg := nums[first], nums[first]
+	for i := first + 1; i <= last; i++ {
 		if nums[i] < sm {
 			sm = nums[i]
 		}
@@ -68,10 +70,9 @@ func day9_part2(input []string) (string, error) {
 			lg = nums[i]
 		}
 	}
-	r := sm + lg
-	log.Debugf("SMALLEST: %d  +  LARGEST: %d  =  %d\n", sm, lg, r)
 
-	return fmt.Sprintf("%d", r), nil
+	log.Debugf("SMALLEST: %d, LARGEST: %d\n", sm, lg)
+	return fmt.Sprintf("%d", sm+lg), nil
 }
 
 func day9_parseInts(input []string) []int {
