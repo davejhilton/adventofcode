@@ -48,12 +48,7 @@ func day14_part2(input []string) (string, error) {
 		} else {
 			i, v := day14_parseMemVal(line)
 
-			idxs := day14_applyPart2Mask(i, mask)
-			for _, s := range idxs {
-				x, _ := strconv.ParseInt(s, 2, 64)
-				log.Debugf("\t%s - %d\n", s, x)
-				mem[s] = v
-			}
+			day14_applyPart2Mask(i, mask, &mem, v)
 		}
 	}
 
@@ -79,35 +74,33 @@ func day14_intToBinString(n int) string {
 	return str[len(str)-36:]
 }
 
-func day14_applyPart2Mask(n int, mask string) []string {
-	binString := []rune(day14_intToBinString(n))
-	log.Debugf("  %d - %s\n", n, string(binString))
+func day14_applyPart2Mask(idx int, mask string, mem *map[string]int, v int) {
+	binString := []rune(day14_intToBinString(idx))
+	log.Debugf("  %d - %s\n", idx, string(binString))
 	for i := len(mask) - 1; i >= 0; i-- {
 		if mask[i] != '0' {
 			binString[i] = rune(mask[i])
 		}
 	}
 
-	return day14_findAllPermutations(string(binString), 0)
+	day14_storeAllPermutations(string(binString), 0, mem, v)
 }
 
-func day14_findAllPermutations(str string, idx int) []string {
+func day14_storeAllPermutations(str string, idx int, mem *map[string]int, v int) {
 	input := []rune(str)
-	res := make([]string, 0)
 	floated := false
-	for ; idx < len(input); idx++ {
-		if input[idx] == 'X' {
-			input[idx] = '1'
-			res = append(res, day14_findAllPermutations(string(input), idx+1)...)
-			input[idx] = '0'
-			res = append(res, day14_findAllPermutations(string(input), idx+1)...)
+	for i := idx; i < len(input); i++ {
+		if input[i] == 'X' {
+			input[i] = '1'
+			day14_storeAllPermutations(string(input), i+1, mem, v)
+			input[i] = '0'
+			day14_storeAllPermutations(string(input), i+1, mem, v)
 			floated = true
 		}
 	}
 	if !floated {
-		res = append(res, str)
+		(*mem)[str] = v
 	}
-	return res
 }
 
 func init() {
