@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"strconv"
+	"time"
 
 	"github.com/davejhilton/adventofcode2020/challenges"
 	"github.com/davejhilton/adventofcode2020/log"
@@ -17,11 +18,13 @@ func main() {
 	var verbose bool
 	var noColor bool
 	var example bool
+	var printTime bool
 
 	flag.Usage = printUsage
 	flag.BoolVar(&verbose, "v", false, "verbose: if enabled, will print debug logs")
 	flag.BoolVar(&noColor, "n", false, "nocolor: if true, debug logs will not have coloring")
 	flag.BoolVar(&example, "e", false, "example: if true, use the example input file instead")
+	flag.BoolVar(&printTime, "t", false, "time:    if true, print the execution time after the solution")
 	flag.Parse()
 	parseArgs(&day, &part)
 
@@ -34,13 +37,21 @@ func main() {
 		os.Exit(1)
 	}
 
+	startTime := time.Now()
+
 	solution, err := challenge.Run(example)
+
+	execTime := time.Now().Sub(startTime)
+
 	if err != nil {
 		fmt.Fprintln(os.Stderr, fmt.Errorf("Error running challenge!\nError: %w", err))
 		os.Exit(1)
 	}
 
 	fmt.Printf("====================\n%s\n====================\nSolution: %s\n====================\n", challenge.Name(), solution)
+	if printTime {
+		fmt.Printf("Execution time: %v\n", execTime)
+	}
 }
 
 func parseArgs(day *int, part *int) {
