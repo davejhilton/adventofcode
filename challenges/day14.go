@@ -10,27 +10,34 @@ import (
 
 func day14_part1(input []string) (string, error) {
 
-	mem := make(map[int]int64)
-	mask := strings.TrimPrefix(input[0], "mask = ")
-	for _, line := range input[1:] {
+	mem := make(map[uint64]uint64)
+	var mask string
+	for _, line := range input {
+		log.Debugln(line)
 		if strings.HasPrefix(line, "mask") {
 			mask = strings.TrimPrefix(line, "mask = ")
+			log.Debugf("\tset mask: %s\n", mask)
 		} else {
-			i, v := day14_parseMemVal(line)
-
-			binString := []rune(day14_intToBinString(v))
-			for j := len(mask) - 1; j >= 0; j-- {
-				if mask[j] != 'X' {
-					binString[j] = rune(mask[j])
+			addr, value := day14_parseMemLine(line)
+			log.Debugf("\tbinary:   %.*b (before mask)\n", len(mask), value)
+			for i := len(mask) - 1; i >= 0; i-- {
+				switch mask[i] {
+				case '0':
+					// use bitwise 'AND NOT' &^ to clear the bit
+					value = value &^ (1 << (len(mask) - i - 1))
+				case '1':
+					// use bitwise 'OR' | to set the bit
+					value = value | (1 << (len(mask) - i - 1))
+				case 'X':
+				default:
 				}
 			}
-			n, _ := strconv.ParseInt(string(binString), 2, 64)
-			log.Debugf("%s - %d\n", string(binString), n)
-			mem[i] = n
+			mem[addr] = value
+			log.Debugf("\tstoring:  %.*b (%d) at addr %d\n", len(mask), value, value, addr)
 		}
 	}
 
-	sum := int64(0)
+	var sum uint64
 	for _, n := range mem {
 		sum += n
 	}
@@ -38,69 +45,58 @@ func day14_part1(input []string) (string, error) {
 }
 
 func day14_part2(input []string) (string, error) {
-	mem := make(map[int64]int)
-	mask := strings.TrimPrefix(input[0], "mask = ")
-	for _, line := range input[1:] {
+	mem := make(map[uint64]uint64)
+	var mask string
+	for _, line := range input {
 		log.Debugln(line)
 		if strings.HasPrefix(line, "mask") {
 			mask = strings.TrimPrefix(line, "mask = ")
-			log.Debugln("  set new mask")
+			log.Debugf("\tset new mask: %s\n", mask)
 		} else {
-			i, v := day14_parseMemVal(line)
-
-			day14_applyPart2Mask(i, mask, &mem, v)
+			addr, value := day14_parseMemLine(line)
+			day14_storeAllPermutations(addr, mask, value, &mem)
 		}
 	}
 
-	sum := 0
+	var sum uint64
 	for _, n := range mem {
 		sum += n
 	}
 	return fmt.Sprintf("%d", sum), nil
 }
 
-func day14_parseMemVal(m string) (int, int) {
-	m = strings.TrimPrefix(m, "mem[")
-	parts := strings.SplitN(m, "]", 2)
-	i, _ := strconv.Atoi(parts[0])
-	n, _ := strconv.Atoi(strings.TrimPrefix(parts[1], " = "))
+func day14_parseMemLine(line string) (uint64, uint64) {
+	line = strings.TrimPrefix(line, "mem[")
+	parts := strings.SplitN(line, "]", 2)
+	addr, _ := strconv.ParseUint(parts[0], 10, 64)
+	value, _ := strconv.ParseUint(strings.TrimPrefix(parts[1], " = "), 10, 64)
 
-	return i, n
+	return addr, value
 }
 
-func day14_intToBinString(n int) string {
-	pad := "000000000000000000000000000000000000"
-	str := fmt.Sprintf("%s%s", pad, strconv.FormatInt(int64(n), 2))
-	return str[len(str)-36:]
-}
-
-func day14_applyPart2Mask(idx int, mask string, mem *map[int64]int, v int) {
-	binString := []rune(day14_intToBinString(idx))
-	log.Debugf("  %d - %s\n", idx, string(binString))
-	for i := len(mask) - 1; i >= 0; i-- {
-		if mask[i] != '0' {
-			binString[i] = rune(mask[i])
-		}
-	}
-
-	day14_storeAllPermutations(string(binString), 0, mem, v)
-}
-
-func day14_storeAllPermutations(str string, idx int, mem *map[int64]int, v int) {
-	input := []rune(str)
+func day14_storeAllPermutations(addr uint64, mask string, value uint64, mem *map[uint64]uint64) {
+	log.Debugln("\trecursing:")
+	log.Debugf("\t\taddr: %.8b - %d\n", addr, addr)
+	log.Debugf("\t\tmask: %8s\n", mask)
 	floated := false
-	for i := idx; i < len(input); i++ {
-		if input[i] == 'X' {
-			input[i] = '1'
-			day14_storeAllPermutations(string(input), i+1, mem, v)
-			input[i] = '0'
-			day14_storeAllPermutations(string(input), i+1, mem, v)
+	for i := 0; i < len(mask); i++ {
+		if mask[i] == 'X' {
+			// bitwise 'OR' | to set the bit
+			addr = addr | (1 << (len(mask) - i - 1))
+			day14_storeAllPermutations(addr, mask[i+1:], value, mem)
+			// bitwise 'AND NOT' &^ to clear the bit
+			addr = addr &^ (1 << (len(mask) - i - 1))
+			day14_storeAllPermutations(addr, mask[i+1:], value, mem)
 			floated = true
+		} else if mask[i] == '1' {
+			// bitwise 'OR' | to set the bit
+			addr = addr | (1 << (len(mask) - i - 1))
 		}
 	}
+
 	if !floated {
-		n, _ := strconv.ParseInt(str, 2, 64)
-		(*mem)[n] = v
+		log.Debugf("\t\tstoring value %d at addr %.8b (%d)\n", value, addr, addr)
+		(*mem)[addr] = value
 	}
 }
 
