@@ -38,7 +38,7 @@ func day14_part1(input []string) (string, error) {
 }
 
 func day14_part2(input []string) (string, error) {
-	mem := make(map[string]int)
+	mem := make(map[int64]int)
 	mask := strings.TrimPrefix(input[0], "mask = ")
 	for _, line := range input[1:] {
 		log.Debugln(line)
@@ -74,7 +74,7 @@ func day14_intToBinString(n int) string {
 	return str[len(str)-36:]
 }
 
-func day14_applyPart2Mask(idx int, mask string, mem *map[string]int, v int) {
+func day14_applyPart2Mask(idx int, mask string, mem *map[int64]int, v int) {
 	binString := []rune(day14_intToBinString(idx))
 	log.Debugf("  %d - %s\n", idx, string(binString))
 	for i := len(mask) - 1; i >= 0; i-- {
@@ -86,7 +86,7 @@ func day14_applyPart2Mask(idx int, mask string, mem *map[string]int, v int) {
 	day14_storeAllPermutations(string(binString), 0, mem, v)
 }
 
-func day14_storeAllPermutations(str string, idx int, mem *map[string]int, v int) {
+func day14_storeAllPermutations(str string, idx int, mem *map[int64]int, v int) {
 	input := []rune(str)
 	floated := false
 	for i := idx; i < len(input); i++ {
@@ -99,7 +99,8 @@ func day14_storeAllPermutations(str string, idx int, mem *map[string]int, v int)
 		}
 	}
 	if !floated {
-		(*mem)[str] = v
+		n, _ := strconv.ParseInt(str, 2, 64)
+		(*mem)[n] = v
 	}
 }
 
