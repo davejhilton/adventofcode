@@ -9,13 +9,13 @@ import (
 	"github.com/davejhilton/adventofcode2020/log"
 )
 
-func day4_part1(input []string, isExample bool) (string, error) {
+func day4_part1(input []string) (string, error) {
 	passports := day4_parseInput(input)
 	nValid := day4_countValid(passports, false)
 	return fmt.Sprintf("%d", nValid), nil
 }
 
-func day4_part2(input []string, isExample bool) (string, error) {
+func day4_part2(input []string) (string, error) {
 	passports := day4_parseInput(input)
 	nValid := day4_countValid(passports, true)
 	return fmt.Sprintf("%d", nValid), nil
@@ -255,6 +255,6 @@ func (p day4_passport) validCountryID(strict bool) bool {
 }
 
 func init() {
-	registerChallengeFunc(4, 1, "day4.txt", day4_part1)
-	registerChallengeFunc(4, 2, "day4.txt", day4_part2)
+	registerChallengeFunc(4, 1, "day04.txt", day4_part1)
+	registerChallengeFunc(4, 2, "day04.txt", day4_part2)
 }

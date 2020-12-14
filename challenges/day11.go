@@ -6,7 +6,7 @@ import (
 	"github.com/davejhilton/adventofcode2020/log"
 )
 
-func day11_part1(input []string, isExample bool) (string, error) {
+func day11_part1(input []string) (string, error) {
 	seating := day11_parseSeating(input)
 
 	iterCount := 0
@@ -96,7 +96,7 @@ func day11_checkAdjacentOccupied(seating [][]rune, r int, c int) int {
 	return numOccupied
 }
 
-func day11_part2(input []string, isExample bool) (string, error) {
+func day11_part2(input []string) (string, error) {
 	seating := day11_parseSeating(input)
 
 	iterCount := 0

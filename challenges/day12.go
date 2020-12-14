@@ -8,7 +8,7 @@ import (
 	"github.com/davejhilton/adventofcode2020/log"
 )
 
-func day12_part1(input []string, isExample bool) (string, error) {
+func day12_part1(input []string) (string, error) {
 	directions := day12_parseDirections(input)
 
 	state := day12_state{
@@ -54,7 +54,7 @@ func day12_part1(input []string, isExample bool) (string, error) {
 	return fmt.Sprintf("%d", result), nil
 }
 
-func day12_part2(input []string, isExample bool) (string, error) {
+func day12_part2(input []string) (string, error) {
 	directions := day12_parseDirections(input)
 
 	ship := day12_state{

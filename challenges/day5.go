@@ -6,7 +6,7 @@ import (
 	"github.com/davejhilton/adventofcode2020/log"
 )
 
-func day5_part1(input []string, isExample bool) (string, error) {
+func day5_part1(input []string) (string, error) {
 	maxSeat := 0
 	for i, line := range input {
 		log.Debugf("Line %d\n", i)
@@ -19,7 +19,7 @@ func day5_part1(input []string, isExample bool) (string, error) {
 	return fmt.Sprintf("%d", maxSeat), nil
 }
 
-func day5_part2(input []string, isExample bool) (string, error) {
+func day5_part2(input []string) (string, error) {
 	seats := make([]bool, 1027, 1027)
 	for i, line := range input {
 		log.Debugf("Line %d\n", i)
@@ -67,6 +67,6 @@ func day5_findSeat(line string) int {
 }
 
 func init() {
-	registerChallengeFunc(5, 1, "day5.txt", day5_part1)
-	registerChallengeFunc(5, 2, "day5.txt", day5_part2)
+	registerChallengeFunc(5, 1, "day05.txt", day5_part1)
+	registerChallengeFunc(5, 2, "day05.txt", day5_part2)
 }

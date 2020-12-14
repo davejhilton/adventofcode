@@ -9,13 +9,14 @@ import (
 )
 
 type Challenge struct {
-	day           int
-	part          int
-	inputFileName string
-	exec          challengeFunc
+	Day           int
+	Part          int
+	InputFileName string
+	Input         []string
+	Exec          challengeFunc
 }
 
-func GetChallenge(day, part int) (Challenge, error) {
+func GetChallenge(day, part, exampleNumber int) (Challenge, error) {
 	d, ok := allChallenges[day]
 	if !ok || d == nil {
 		return Challenge{}, fmt.Errorf("Unknown Day: '%d'", day)
@@ -24,6 +25,11 @@ func GetChallenge(day, part int) (Challenge, error) {
 	challenge, ok := allChallenges[day][part]
 	if !ok {
 		return Challenge{}, fmt.Errorf("Unknown Challenge: Day '%d' Part '%d'", day, part)
+	}
+
+	if exampleNumber != -1 {
+		prefix := strings.TrimSuffix(challenge.InputFileName, ".txt")
+		challenge.InputFileName = fmt.Sprintf("%s_example%d.txt", prefix, exampleNumber)
 	}
 
 	return challenge, nil
@@ -38,41 +44,43 @@ func registerChallengeFunc(day int, part int, inputFileName string, execFunc cha
 		allChallenges[day] = make(map[int]Challenge)
 	}
 	allChallenges[day][part] = Challenge{
-		day:           day,
-		part:          part,
-		inputFileName: inputFileName,
-		exec:          execFunc,
+		Day:           day,
+		Part:          part,
+		InputFileName: inputFileName,
+		Exec:          execFunc,
 	}
 }
 
-type challengeFunc func(input []string, isExample bool) (string, error)
+type challengeFunc func(input []string) (string, error)
 
-func (c Challenge) Run(example bool) (string, error) {
-	if c.exec == nil {
+func (ch Challenge) Run() (string, error) {
+	if ch.Exec == nil {
 		return "", fmt.Errorf("Unknown Challenge")
 	}
 	var input []string
 	var err error
-	fileName := c.inputFileName
-	if fileName != "" {
-		if example {
-			pre := strings.TrimSuffix(fileName, ".txt")
-			fileName = fmt.Sprintf("%s_example.txt", pre)
-		}
-		input, err = readInputFile(fileName)
+	if ch.InputFileName != "" {
+		input, err = readInputFile(ch.InputFileName)
 		if err != nil {
 			return "", err
 		}
+		ch.Input = input
 	}
-	return c.exec(input, example)
+	currentChallenge = &ch
+	defer func() {
+		currentChallenge = nil
+	}()
+	return ch.Exec(input)
 }
 
-func (c Challenge) Name() string {
-	if c.day == 0 {
+func (ch Challenge) Name() string {
+	if ch.Day == 0 {
 		return "Unknown Challenge"
 	}
-	return fmt.Sprintf("Day %d - Part %d", c.day, c.part)
+	return fmt.Sprintf("Day %d - Part %d", ch.Day, ch.Part)
 }
+
+var currentChallenge *Challenge
 
 var allChallenges map[int]map[int]Challenge
 

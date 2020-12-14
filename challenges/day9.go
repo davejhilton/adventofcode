@@ -3,18 +3,19 @@ package challenges
 import (
 	"fmt"
 	"strconv"
+	"strings"
 
 	"github.com/davejhilton/adventofcode2020/log"
 )
 
-func day9_part1(input []string, isExample bool) (string, error) {
+func day9_part1(input []string) (string, error) {
 	nums := day9_parseInts(input)
 
 	var i int
 	var window int
 	var result int
 
-	if isExample {
+	if strings.Contains(currentChallenge.InputFileName, "example") {
 		window = 5
 	} else {
 		window = 25
@@ -45,11 +46,11 @@ func day9_checkSum(val int, nums []int) bool {
 	return false
 }
 
-func day9_part2(input []string, isExample bool) (string, error) {
+func day9_part2(input []string) (string, error) {
 	nums := day9_parseInts(input)
 
 	var target int
-	if isExample {
+	if strings.Contains(currentChallenge.InputFileName, "example") {
 		target = 127
 	} else {
 		target = 2089807806
@@ -96,6 +97,6 @@ func day9_parseInts(input []string) []int {
 }
 
 func init() {
-	registerChallengeFunc(9, 1, "day9.txt", day9_part1)
-	registerChallengeFunc(9, 2, "day9.txt", day9_part2)
+	registerChallengeFunc(9, 1, "day09.txt", day9_part1)
+	registerChallengeFunc(9, 2, "day09.txt", day9_part2)
 }

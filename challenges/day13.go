@@ -8,7 +8,7 @@ import (
 	"github.com/davejhilton/adventofcode2020/log"
 )
 
-func day13_part1(input []string, isExample bool) (string, error) {
+func day13_part1(input []string) (string, error) {
 	time, buses := day13_parseInput(input, false)
 	log.Debugf("TIME: %d, BUSES: ", time)
 	for _, b := range buses {
@@ -39,7 +39,7 @@ func day13_part1(input []string, isExample bool) (string, error) {
 	return fmt.Sprintf("%d", wait*firstBusId), nil
 }
 
-func day13_part2(input []string, isExample bool) (string, error) {
+func day13_part2(input []string) (string, error) {
 	_, buses := day13_parseInput(input, true)
 
 	overlaps := make([][]int, len(buses), len(buses))

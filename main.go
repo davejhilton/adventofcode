@@ -16,22 +16,22 @@ func main() {
 	var day int = 1
 	var part int = 1
 	var verbose bool
-	var noColor bool
-	var example bool
+	var color bool
 	var printTime bool
+	var exampleNum int
 
 	flag.Usage = printUsage
-	flag.BoolVar(&verbose, "v", false, "verbose: if enabled, will print debug logs")
-	flag.BoolVar(&noColor, "n", false, "nocolor: if true, debug logs will not have coloring")
-	flag.BoolVar(&example, "e", false, "example: if true, use the example input file instead")
-	flag.BoolVar(&printTime, "t", false, "time:    if true, print the execution time after the solution")
+	flag.BoolVar(&verbose, "v", false, "verbose:     if true, will print debug logs")
+	flag.BoolVar(&color, "c", true, "color:       if true, debug logs may have coloring")
+	flag.BoolVar(&printTime, "t", true, "time:        if true, print the execution time after the solution")
+	flag.IntVar(&exampleNum, "e", -1, "example-num: the number of the example input file to run")
 	flag.Parse()
 	parseArgs(&day, &part)
 
 	log.EnableDebugLogs(verbose)
-	log.EnableColors(!noColor)
+	log.EnableColors(color)
 
-	challenge, err := challenges.GetChallenge(day, part)
+	challenge, err := challenges.GetChallenge(day, part, exampleNum)
 	if err != nil {
 		fmt.Fprintln(os.Stderr, fmt.Errorf("The specified day number does not exist!\nError: %w", err))
 		os.Exit(1)
@@ -39,7 +39,7 @@ func main() {
 
 	startTime := time.Now()
 
-	solution, err := challenge.Run(example)
+	solution, err := challenge.Run()
 
 	execTime := time.Now().Sub(startTime)
 
@@ -48,9 +48,11 @@ func main() {
 		os.Exit(1)
 	}
 
-	fmt.Printf("====================\n%s\n====================\nSolution: %s\n====================\n", challenge.Name(), solution)
+	fmt.Printf("====================\n%s\n", challenge.Name())
+	fmt.Printf("%s\n", challenge.InputFileName)
+	fmt.Printf("====================\nSolution: %s\n====================\n", solution)
 	if printTime {
-		fmt.Printf("Execution time: %v\n", execTime)
+		fmt.Printf("time: %v\n", execTime)
 	}
 }
 

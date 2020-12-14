@@ -4,12 +4,12 @@ import (
 	"fmt"
 )
 
-func day3_part1(input []string, isExample bool) (string, error) {
+func day3_part1(input []string) (string, error) {
 	nTrees := day3_traverseSlopes(input, 3, 1)
 	return fmt.Sprintf("%d", nTrees), nil
 }
 
-func day3_part2(input []string, isExample bool) (string, error) {
+func day3_part2(input []string) (string, error) {
 
 	slopes := [][]int{
 		[]int{1, 1},
@@ -45,6 +45,6 @@ func day3_traverseSlopes(input []string, r int, d int) int {
 }
 
 func init() {
-	registerChallengeFunc(3, 1, "day3.txt", day3_part1)
-	registerChallengeFunc(3, 2, "day3.txt", day3_part2)
+	registerChallengeFunc(3, 1, "day03.txt", day3_part1)
+	registerChallengeFunc(3, 2, "day03.txt", day3_part2)
 }

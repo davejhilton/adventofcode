@@ -8,7 +8,7 @@ import (
 	"github.com/davejhilton/adventofcode2020/log"
 )
 
-func day10_part1(input []string, isExample bool) (string, error) {
+func day10_part1(input []string) (string, error) {
 	nums := day10_getSortedJoltages(input)
 
 	ones := 0
@@ -32,7 +32,7 @@ func day10_part1(input []string, isExample bool) (string, error) {
 	return fmt.Sprintf("%d", ones*threes), nil
 }
 
-func day10_part2(input []string, isExample bool) (string, error) {
+func day10_part2(input []string) (string, error) {
 	nums := day10_getSortedJoltages(input)
 
 	log.Debugf("%v\n", nums)

@@ -8,7 +8,7 @@ import (
 	"github.com/davejhilton/adventofcode2020/log"
 )
 
-func day2_part1(input []string, isExample bool) (string, error) {
+func day2_part1(input []string) (string, error) {
 	valid := 0
 	for _, line := range input {
 		parts := strings.SplitN(line, " ", 3)
@@ -32,7 +32,7 @@ func day2_part1(input []string, isExample bool) (string, error) {
 	return fmt.Sprintf("%d", valid), nil
 }
 
-func day2_part2(input []string, isExample bool) (string, error) {
+func day2_part2(input []string) (string, error) {
 	valid := 0
 	for _, line := range input {
 		parts := strings.SplitN(line, " ", 3)
@@ -62,6 +62,6 @@ func day2_part2(input []string, isExample bool) (string, error) {
 }
 
 func init() {
-	registerChallengeFunc(2, 1, "day2.txt", day2_part1)
-	registerChallengeFunc(2, 2, "day2.txt", day2_part2)
+	registerChallengeFunc(2, 1, "day02.txt", day2_part1)
+	registerChallengeFunc(2, 2, "day02.txt", day2_part2)
 }
