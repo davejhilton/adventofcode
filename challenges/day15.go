@@ -17,21 +17,15 @@ func day15_part2(input []string) (string, error) {
 }
 
 func day15_iterate(numList string, target int) int {
-
-	strs := strings.Split(numList, ",")
-	startingNums := make([]int, 0, len(strs))
-	for _, s := range strs {
-		n, _ := strconv.Atoi(s)
-		startingNums = append(startingNums, n)
-	}
-
 	var i int
 	var prev int
 	lastSeen := make(map[int]int)
 
-	for i = 0; i < len(startingNums); i++ {
-		lastSeen[startingNums[i]] = i + 1
-		prev = startingNums[i]
+	numStrings := strings.Split(numList, ",")
+	for i = 0; i < len(numStrings); i++ {
+		n, _ := strconv.Atoi(numStrings[i])
+		lastSeen[n] = i + 1
+		prev = n
 		log.Debugf("%8d: %d\n", i+1, prev)
 	}
 
