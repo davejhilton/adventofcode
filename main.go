@@ -16,20 +16,20 @@ func main() {
 	var day int = 1
 	var part int = 1
 	var verbose bool
-	var color bool
 	var printTime bool
 	var exampleNum int
 
 	flag.Usage = printUsage
-	flag.BoolVar(&verbose, "v", false, "verbose:     if true, will print debug logs")
-	flag.BoolVar(&color, "c", true, "color:       if true, debug logs may have coloring")
-	flag.BoolVar(&printTime, "t", true, "time:        if true, print the execution time after the solution")
-	flag.IntVar(&exampleNum, "e", -1, "example-num: the number of the example input file to run")
+	flag.BoolVar(&verbose, "verbose", false, "verbose:     if true, will print debug logs")
+	flag.BoolVar(&verbose, "v", false, "")
+	flag.BoolVar(&printTime, "time", true, "time:        if true, print the execution time after the solution")
+	flag.BoolVar(&printTime, "t", true, "")
+	flag.IntVar(&exampleNum, "example", -1, "example-num: the number of the example input file to run")
+	flag.IntVar(&exampleNum, "e", -1, "")
 	flag.Parse()
 	parseArgs(&day, &part)
 
 	log.EnableDebugLogs(verbose)
-	log.EnableColors(color)
 
 	challenge, err := challenges.GetChallenge(day, part, exampleNum)
 	if err != nil {
