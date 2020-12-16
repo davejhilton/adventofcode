@@ -23,6 +23,10 @@ func EnableDebugLogs(enable bool) {
 	enableDebugMessages = enable
 }
 
+func DebugEnabled() bool {
+	return enableDebugMessages
+}
+
 func EnableColors(enable bool) {
 	enableColors = enable
 }

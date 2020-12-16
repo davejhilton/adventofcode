@@ -9,226 +9,202 @@ import (
 )
 
 func day16_part1(input []string) (string, error) {
-	rules, myTicketVals, nearbyTickets := day16_parseInput(input)
+	fields, _, tickets := day16_parseInput(input)
 
-	for _, r := range rules {
-		log.Debugf("%s: %d-%d or %d-%d\n", r.Name, r.Min1, r.Max1, r.Min2, r.Max2)
-	}
-
-	for _, n := range myTicketVals {
-		log.Debugf("%d, ", n)
-	}
-	log.Debugln("\n")
-	for _, t := range nearbyTickets {
-		for _, n := range t {
-			log.Debugf("%d, ", n)
-		}
-		log.Debugln()
-	}
-
-	invalidSum := 0
-	for _, ticket := range nearbyTickets {
-
-		for _, n := range ticket {
+	log.Debugln("Checking tickets for impossible field values:")
+	var debugStr strings.Builder
+	sum := 0
+	for i, ticket := range tickets {
+		for _, value := range ticket {
 			var valid bool
-			for _, rule := range rules {
-				if rule.CheckValue(n) {
+			for _, field := range fields {
+				if field.RulesApply(value) {
 					valid = true
 					break
 				}
 			}
 			if !valid {
-				log.Debugf("invalid value: %d\n", n)
-				invalidSum += n
+				sum += value
+				fmt.Fprintf(&debugStr, "%s,", log.Colorize(value, log.Red, 0))
+			} else {
+				fmt.Fprintf(&debugStr, "%d,", value)
 			}
 		}
+		log.Debugf("  %3d:   %s\n", i, debugStr.String()[:debugStr.Len()-1])
+		debugStr.Reset()
 	}
 
-	return fmt.Sprintf("%d", invalidSum), nil
+	return fmt.Sprintf("%d", sum), nil
 }
 
 func day16_part2(input []string) (string, error) {
-	rules, myTicketVals, nearbyTickets := day16_parseInput(input)
+	fields, myTicketVals, tickets := day16_parseInput(input)
 
-	for _, r := range rules {
-		log.Debugf("%s: %d-%d or %d-%d\n", r.Name, r.Min1, r.Max1, r.Min2, r.Max2)
-	}
-
-	for _, n := range myTicketVals {
-		log.Debugf("%d, ", n)
-	}
-	log.Debugln("\n")
-	for _, t := range nearbyTickets {
-		for _, n := range t {
-			log.Debugf("%d, ", n)
-		}
-		log.Debugln()
-	}
-
+	// First, weed out all of the invalid tickets
 	validTickets := make([][]int, 0)
-	for _, ticket := range nearbyTickets {
-		ticketValid := true
-	outer:
-		for _, n := range ticket {
+	for _, ticket := range tickets {
+		invalidIndex := -1
+		for i, value := range ticket {
 			var valid bool
-			for _, rule := range rules {
-				if rule.CheckValue(n) {
+			for _, field := range fields {
+				if field.RulesApply(value) {
 					valid = true
 					break
 				}
 			}
 			if !valid {
-				ticketValid = false
-				break outer
+				invalidIndex = i
+				break
 			}
 		}
-		if ticketValid {
+		if invalidIndex == -1 {
 			validTickets = append(validTickets, ticket)
-		}
-	}
-
-	possibleIdxs := make(map[string][]int)
-
-	for i, n := range myTicketVals {
-		for _, rule := range rules {
-			if match := rule.CheckValue(n); match {
-				list, ok := possibleIdxs[rule.Name]
-				if !ok {
-					list = make([]int, 0)
+		} else {
+			log.Debug("Eliminating invalid ticket: [")
+			for i, v := range ticket {
+				if i == invalidIndex {
+					log.Debug(log.Colorize(v, log.Red, 0))
+				} else {
+					log.Debugf("%d", v)
 				}
-				list = append(list, i)
-				possibleIdxs[rule.Name] = list
+				if i != len(ticket)-1 {
+					log.Debug(",")
+				}
 			}
+			log.Debugln("]")
+		}
+	}
+	log.Debugln()
+
+	// next, create and populate a map of field => possible ticket indexes
+	fieldMap := make(map[string]map[int]bool)
+	for field := range fields {
+		fieldMap[field] = make(map[int]bool)
+		for i := 0; i < len(myTicketVals); i++ {
+			fieldMap[field][i] = true
 		}
 	}
 
-	matches := make(map[string][]int)
-	for ruleName, idxs := range possibleIdxs {
-
-		stillValidIdxs := make([]int, 0)
-
-		for _, i := range idxs {
-			valid := true
+	// next, for each field, eliminate ticket indexes that have any values that break that field's rules
+	for field, idxMap := range fieldMap {
+		for i := range idxMap {
 			for _, ticket := range validTickets {
-				if !rules[ruleName].CheckValue(ticket[i]) {
-					valid = false
+				if !fields[field].RulesApply(ticket[i]) {
+					delete(fieldMap[field], i)
 					break
 				}
 			}
-			if valid {
-				stillValidIdxs = append(stillValidIdxs, i)
-			}
-		}
-		matches[ruleName] = stillValidIdxs
-
-	}
-
-	idxMatches := make(map[int][]string)
-	for ruleName, idxs := range matches {
-		for _, idx := range idxs {
-			if _, ok := idxMatches[idx]; !ok {
-				idxMatches[idx] = make([]string, 0)
-			}
-			idxMatches[idx] = append(idxMatches[idx], ruleName)
 		}
 	}
 
-	idxMap := make(map[int]string)
-	for len(idxMatches) > 0 && len(matches) > 0 {
-		for idx, names := range idxMatches {
-			if len(names) == 1 {
-				idxMap[idx] = names[0]
-				delete(idxMatches, idx)
-				delete(matches, names[0])
-				log.Debugf("FOUND ONE: %d = %s\n", idx, names[0])
+	// lastly, assign a ticket index to each field, based on an iterative process of elimination
+	final := make([]string, len(myTicketVals), len(myTicketVals))
+	for len(fieldMap) > 0 {
+		for field, idxMap := range fieldMap {
+			if len(idxMap) == 1 {
+				for idx := range idxMap {
+					final[idx] = field
+					log.Debugf("Found a 1:1 match: Field %-20s is at index: %2d\n", fmt.Sprintf("'%s'", field), idx)
+				}
+				delete(fieldMap, field)
 			} else {
-				unmatched := make([]string, 0)
-				for _, name := range names {
-					found := false
-					for _, n := range idxMap {
-						if n == name {
-							found = true
+				for idx := range idxMap {
+					for i, name := range final {
+						if i == idx && name != "" {
+							delete(fieldMap[field], i)
 							break
 						}
 					}
-					if !found {
-						unmatched = append(unmatched, name)
-					}
 				}
-				idxMatches[idx] = unmatched
 			}
 		}
 	}
 
-	log.Debugln()
-
+	// now, multiply together all the values on "my ticket" for fields that start with "departure"
+	log.Debugln("\nTicket Fields, in order:\n------------------------")
 	product := 1
-	for idx, name := range idxMap {
-		log.Debugf("%s - myTicketVals[%d] = %d\n", name, idx, myTicketVals[idx])
+	for idx, name := range final {
 		if strings.HasPrefix(name, "departure") {
+			log.Debugf("%2d. %-31s (value = %s)\n", idx, strings.ReplaceAll(name, "departure", log.Colorize("departure", log.Green, 0)), log.Colorize(myTicketVals[idx], log.Green, 3))
 			product *= myTicketVals[idx]
+		} else {
+			log.Debugf("%2d. %-20s (value = %3d)\n", idx, name, myTicketVals[idx])
 		}
 	}
 
 	return fmt.Sprintf("%d", product), nil
 }
 
+type day16_field struct {
+	Name  string
+	Rules []day16_rule
+}
+
+func (f day16_field) RulesApply(n int) bool {
+	for _, rule := range f.Rules {
+		if rule.CheckValue(n) {
+			return true
+		}
+	}
+	return false
+}
+
 type day16_rule struct {
-	Name string
-	Min1 int
-	Max1 int
-	Min2 int
-	Max2 int
+	Min int
+	Max int
 }
 
 func (r day16_rule) CheckValue(n int) bool {
-	if n >= r.Min1 && n <= r.Max1 {
-		return true
-	} else if n >= r.Min2 && n <= r.Max2 {
-		return true
-	} else {
-		return false
-	}
+	return n >= r.Min && n <= r.Max
 }
 
-func day16_parseInput(input []string) (map[string]day16_rule, []int, [][]int) {
-	var i int
+func day16_parseInput(input []string) (map[string]day16_field, []int, [][]int) {
 
-	rules := make(map[string]day16_rule)
+	var i int
+	fields := make(map[string]day16_field)
+	log.Debugln("Ticket Fields and Their Rules:")
 	for {
 		if input[i] == "" {
 			i++
 			break
 		}
 
-		rule := day16_rule{}
+		rule1, rule2 := day16_rule{}, day16_rule{}
+		field := day16_field{}
 
 		parts := strings.Split(input[i], ": ")
-		rule.Name = parts[0]
-		fmt.Sscanf(parts[1], "%d-%d or %d-%d", &rule.Min1, &rule.Max1, &rule.Min2, &rule.Max2)
-		rules[rule.Name] = rule
+		field.Name = parts[0]
+		fmt.Sscanf(parts[1], "%d-%d or %d-%d", &rule1.Min, &rule1.Max, &rule2.Min, &rule2.Max)
+		field.Rules = append(field.Rules, rule1, rule2)
+		fields[field.Name] = field
 		i++
+		log.Debugf("\t%-20s : %d-%d or %d-%d\n", field.Name, field.Rules[0].Min, field.Rules[0].Max, field.Rules[1].Min, field.Rules[1].Max)
 	}
+	log.Debugln()
 
-	i++
+	i++ // skip the "your ticket:" header
+
 	myTicketVals := make([]int, 0)
 	nums := strings.Split(input[i], ",")
 	for j := 0; j < len(nums); j++ {
 		n, _ := strconv.Atoi(nums[j])
 		myTicketVals = append(myTicketVals, n)
 	}
-	nearbyTickets := make([][]int, 0)
-	for i = i + 3; i < len(input); i++ {
+
+	i += 3 // skip the empty line and the "nearby tickets:" header
+
+	tickets := make([][]int, 0)
+	for ; i < len(input); i++ {
 		nums = strings.Split(input[i], ",")
 		ticket := make([]int, 0, len(nums))
 		for j := 0; j < len(nums); j++ {
 			n, _ := strconv.Atoi(nums[j])
 			ticket = append(ticket, n)
 		}
-		nearbyTickets = append(nearbyTickets, ticket)
+		tickets = append(tickets, ticket)
 	}
 
-	return rules, myTicketVals, nearbyTickets
+	return fields, myTicketVals, tickets
 }
 
 func init() {
