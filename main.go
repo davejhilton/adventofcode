@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/davejhilton/adventofcode2020/challenges"
@@ -76,8 +77,13 @@ func parseArgs(day *int, part *int) {
 }
 
 func printUsage() {
-	fmt.Fprintf(os.Stderr, "Usage: %s [OPTIONS] [day] [part]\n", os.Args[0])
-	flag.PrintDefaults()
-	fmt.Fprintf(os.Stderr, "\n [day]\twhich day's challenge to run (integer)\n")
-	fmt.Fprintf(os.Stderr, "[part]\twhich of the specified [day]'s challenges to run (integer)\n")
+	prgParts := strings.Split(os.Args[0], "/")
+	fmt.Fprintf(os.Stderr, "Usage:\n  %s [OPTIONS] [day] [part]\n\n", prgParts[len(prgParts)-1])
+	// flag.PrintDefaults()
+	fmt.Fprintln(os.Stderr, "[OPTIONS]")
+	fmt.Fprintln(os.Stderr, "    --example, -e      [int] the example input file number to use")
+	fmt.Fprintln(os.Stderr, "    --verbose, -v      enable debug logging")
+	//
+	fmt.Fprintln(os.Stderr, "[day]                  which day's challenge to run (integer)")
+	fmt.Fprintln(os.Stderr, "[part]                 which of the specified [day]'s challenges to run (integer)")
 }
