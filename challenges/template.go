@@ -8,7 +8,7 @@ import (
 )
 
 func day000_part1(input []string) (string, error) {
-	nums := day000_parse(input)
+	_ = day000_parse(input)
 	var result int
 
 	log.Debugf("Result: %d\n", result)
@@ -16,7 +16,7 @@ func day000_part1(input []string) (string, error) {
 }
 
 func day000_part2(input []string) (string, error) {
-	nums := day000_parse(input)
+	_ = day000_parse(input)
 	var result int
 
 	log.Debugf("Result: %d\n", result)
