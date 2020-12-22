@@ -2,193 +2,111 @@ package challenges
 
 import (
 	"fmt"
-	"math"
 	"regexp"
 	"strings"
 
 	"github.com/davejhilton/adventofcode2020/log"
 )
 
-var tilesPerRow int
-var pixelsPerRow int
-
-var tiles map[int]*day20_tile
-var positions [][]int
-
 func day20_part1(input []string) (string, error) {
-	pixelsPerRow = len(input[1])
-	tiles = day20_parse(input)
 
-	tilesPerRow = int(math.Sqrt(float64(len(tiles))))
+	topLeftCorner := day20_arrangeTiles(input)
 
-	// for id, tile := range tiles {
-	// 	log.Debugf("Tile %d:\n%s\n", id, tile)
-	// }
+	// Now find all the corners, and multiply their IDs
 
-	// 1. start with whichever tile...
-	// 2. match left and move left until nothing else matches left
-	// 3. match up and move up until nothing else matches up
-	// 		now we have our top left corner
-	// 4. match right and move right until nothing else matches right
-	//		now we have our top right corner (and top row)
-	// 5. match down and move down until nothing else matches
-	//		now we have our bottom right corner
-	// 6. match left and move left until nothing else matches
-	//		now we have our bottom left corner
-	// 7. match up and move up and verify that we hit our top left corner when we expect to
+	curTile := topLeftCorner
+	log.Debugf("\n- FOUND 1st CORNER: %d\n", curTile.Id)
+	result := curTile.Id // store the first corner
 
-	var curTile *day20_tile
-	// curTile = tiles[3221]
-	// grab a single tile from our map, as our arbitrary starting point
-	for id := range tiles {
-		curTile = tiles[id]
-		log.Debugf("Starting with tile: %d\n", id)
-		break
+	// next move to the top right corner
+	for curTile.Neighbors[day20_RIGHT] != nil {
+		curTile = curTile.Neighbors[day20_RIGHT]
 	}
+	log.Debugf("- FOUND 2nd CORNER: %d\n", curTile.Id)
+	result *= curTile.Id // store the second corner
 
-	// curTile = tiles[3079]
-	curTile.OrientationLocked = true
-
-	lOrder := make([]int, 0)
-	lOrder = append(lOrder, curTile.Id)
-	// match tiles to the left until we find the left edge of our "image"
-	for {
-		if id, rotation, flip, ok := day20_findNeighbor(day20_LEFT, curTile.Id); ok {
-			log.Debugf("FOUND MATCH: id=%d\n\n", id)
-			day20_addNeighbor(curTile.Id, id, day20_LEFT, rotation, flip)
-
-			lOrder = append(lOrder, id)
-			curTile = tiles[id]
-		} else {
-			break //we found the right edge
-		}
+	// next move to the bottom right corner
+	for curTile.Neighbors[day20_BOTTOM] != nil {
+		curTile = curTile.Neighbors[day20_BOTTOM]
 	}
+	log.Debugf("- FOUND 3rd CORNER: %d\n", curTile.Id)
+	result *= curTile.Id // store the third corner
 
-	log.Debugln("HIT THE LEFT EDGE!")
-	for i := len(lOrder) - 1; i >= 0; i-- {
-		if i != len(lOrder)-1 {
-			log.Debug(" <-- ")
-		}
-		log.Debugf("%d", lOrder[i])
+	// lastly, move to the bottom left corner
+	for curTile.Neighbors[day20_LEFT] != nil {
+		curTile = curTile.Neighbors[day20_LEFT]
 	}
-	log.Debugln()
+	log.Debugf("- FOUND 4th CORNER: %d\n", curTile.Id)
+	result *= curTile.Id // store the last corner
 
-	var topLeftTile *day20_tile
+	return fmt.Sprintf("%d", result), nil
+}
 
-	tOrder := make([]int, 0)
+func day20_arrangeTiles(input []string) *day20_tile {
+	tiles := day20_parse(input)
 
-	for {
-		if id, rotation, flip, ok := day20_findNeighbor(day20_TOP, curTile.Id); ok {
-			log.Debugf("FOUND MATCH: id=%d\n\n", id)
-			log.Debugln(tiles[id])
-			log.Debug("\n\n")
-			day20_addNeighbor(curTile.Id, id, day20_TOP, rotation, flip)
-
-			tOrder = append(tOrder, id)
-			curTile = tiles[id]
-		} else {
-			break //we found the TOP edge
-		}
-	}
-
-	topLeftTile = curTile
-
-	log.Debugln("HIT THE TOP LEFT CORNER!")
-	for i := len(tOrder) - 1; i >= 0; i-- {
-		if i != len(tOrder)-1 {
-			log.Debug(" ^\n |\n |\n")
-		}
-		log.Debugf("%d\n", tOrder[i])
-	}
-	if len(tOrder) != 0 {
-		log.Debug(" ^\n |\n |\n")
-	}
-	for i := len(lOrder) - 1; i >= 0; i-- {
-		if i != len(lOrder)-1 {
-			log.Debug(" <-- ")
-		}
-		log.Debugf("%d", lOrder[i])
-	}
-	log.Debugln()
-
-	// NOW: start figuring crap out top left to bottom right
-
-	positions = make([][]int, tilesPerRow)
-	for i := range positions {
-		positions[i] = make([]int, tilesPerRow)
-	}
-
-	positions[0][0] = topLeftTile.Id
-
-	log.Debugf("\n\n*********************\n")
-	for _, row := range positions {
-		for _, id := range row {
-			log.Debugf("%4d\t", id)
-		}
-		log.Debugln()
-	}
-	log.Debugf("*********************\n\n")
-
-	for i := 1; i < tilesPerRow; i++ {
-		if id, rotation, flip, ok := day20_findNeighbor(day20_BOTTOM, curTile.Id); ok {
-			log.Debugf("FOUND MATCH: id=%d\n\n", id)
-			log.Debugln(tiles[id])
-			log.Debug("\n\n")
-			day20_addNeighbor(curTile.Id, id, day20_BOTTOM, rotation, flip)
-
-			curTile = tiles[id]
-			positions[i][0] = id
-		} else {
-			log.Debugf("BREAKING FROM top-down loop at index: %d\n", i)
-			log.Debugf("NOTHING BELOW Tile %d\n", curTile.Id)
-			break //we found the right edge
-		}
-	}
-
-	for i, row := range positions {
-		if row[0] == 0 {
-			log.Debugf("EMPTY ID: BREAKING FROM left-right loop at index: %d\n", i)
-			break
-		}
-		curTile = tiles[row[0]]
-		for j := 1; j < tilesPerRow; j++ {
-			if id, rotation, flip, ok := day20_findNeighbor(day20_RIGHT, curTile.Id); ok {
-				log.Debugf("FOUND MATCH: id=%d\n\n", id)
-				log.Debugln(tiles[id])
-				log.Debug("\n\n")
-				day20_addNeighbor(curTile.Id, id, day20_RIGHT, rotation, flip)
-
-				lOrder = append(lOrder, id)
-				curTile = tiles[id]
-				positions[i][j] = id
-			} else {
-				log.Debugf("BREAKING FROM left-right loop at index: %d,%d\n", i, j)
-				log.Debugf("NOTHING RIGHT of Tile %d\n", curTile.Id)
-				break //we found the right edge
+	// FIRST, find all the "Neighbor" relations for every tile
+	var changed = true
+	var firstTile *day20_tile
+	for changed {
+		changed = false
+		for _, tile := range tiles {
+			if firstTile == nil {
+				px := tile.Orientations[0]
+				tile.Pixels = &px
+				firstTile = tile
 			}
-		}
-	}
-
-	product := 1
-	log.Debugf("\n\n*********************\n")
-	for i, row := range positions {
-		for j, id := range row {
-			log.Debugf("%4d\t", id)
-			if i == 0 || i == tilesPerRow-1 {
-				if j == 0 || j == tilesPerRow-1 {
-					product *= positions[i][j]
+			if tile.Pixels != nil {
+				for _, dir := range day20_DIRECTIONS {
+					if tile.Neighbors[dir] == nil {
+						log.Debugf("Finding Tile %d's %-6s NEIGHBOR... - ", tile.Id, day20_DIR_NAMES[dir])
+						neighbor, o := tile.FindNeighbor(dir, tiles)
+						if neighbor != nil {
+							log.Debugf("found %4d\n", neighbor.Id)
+							if neighbor.Pixels == nil && o >= 0 {
+								px := neighbor.Orientations[o]
+								neighbor.Pixels = &px
+							}
+							tile.Neighbors[dir] = neighbor
+							neighbor.Neighbors[(dir+2)%4] = tile
+							changed = true
+						} else {
+							log.Debugln("EMPTY")
+						}
+					}
 				}
 			}
 		}
-		log.Debugln()
 	}
 
-	return fmt.Sprintf("%d", product), nil
+	// find the top left corner...
+	curTile := firstTile
+	for curTile.Neighbors[day20_LEFT] != nil {
+		curTile = curTile.Neighbors[day20_LEFT]
+	}
+	for curTile.Neighbors[day20_TOP] != nil {
+		curTile = curTile.Neighbors[day20_TOP]
+	}
+
+	topLeftCorner := curTile
+	log.Debugf("\nFINAL LAYOUT:\n-------------------------\n")
+	leftTile := topLeftCorner
+	for leftTile != nil {
+		curTile = leftTile
+		for curTile != nil {
+			log.Debugf("  %4d", curTile.Id)
+			curTile = curTile.Neighbors[day20_RIGHT]
+		}
+		log.Debugln()
+		leftTile = leftTile.Neighbors[day20_BOTTOM]
+	}
+	log.Debugln()
+
+	return topLeftCorner
 }
 
 func day20_part2(input []string) (string, error) {
-
-	day20_part1(input)
+	topLeftCorner := day20_arrangeTiles(input)
 
 	log.Debug("\n\n\n\n")
 	log.Debug("*****************************************\n")
@@ -196,24 +114,30 @@ func day20_part2(input []string) (string, error) {
 	log.Debug("*****************************************\n")
 	log.Debug("\n\n\n\n")
 
-	//(pixelsPerRow-2)*tilesPerRow
+	// First, let's chop off the borders and create our raw image
 
-	pixels := make([][]rune, 0, pixelsPerRow-2)
-	for tilesRow := 0; tilesRow < len(positions); tilesRow++ {
+	tileSize := len(*(topLeftCorner.Pixels))
+	pixels := make(day20_pixels, 0)
+	leftTile := topLeftCorner
+	for leftTile != nil {
 		pixelRow := 1
-		for ; pixelRow < pixelsPerRow-1; pixelRow++ {
-			row := make([]rune, 0, pixelsPerRow-2)
-			for tilesCol := 0; tilesCol < tilesPerRow; tilesCol++ {
-				pix := tiles[positions[tilesRow][tilesCol]].Pixels
-				for _, p := range pix[pixelRow][1 : pixelsPerRow-1] {
+		for ; pixelRow < tileSize-1; pixelRow++ {
+			row := make([]rune, 0, tileSize-2)
+			curTile := leftTile
+			for curTile != nil {
+				pix := *curTile.Pixels
+				for _, p := range pix[pixelRow][1 : tileSize-1] {
 					row = append(row, p)
 				}
+				curTile = curTile.Neighbors[day20_RIGHT]
 			}
 			pixels = append(pixels, row)
 		}
+		leftTile = leftTile.Neighbors[day20_BOTTOM]
 	}
 
-	log.Debugln(day20_pixelsToString(pixels))
+	log.Debug("Pixels without borders:\n\n")
+	log.Debugln(pixels)
 	log.Debug("\n\n\n\n")
 
 	var monsters [][]int
@@ -221,7 +145,7 @@ func day20_part2(input []string) (string, error) {
 		for rotated := 0; rotated <= 3; rotated++ {
 
 			log.Debug("\n\n")
-			log.Debugln(day20_pixelsToString(pixels))
+			log.Debugln(pixels)
 			log.Debug("\n\n")
 			monsters = day20_findSeamonsters(pixels)
 
@@ -229,13 +153,13 @@ func day20_part2(input []string) (string, error) {
 				break
 			}
 
-			pixels = day20_rotatePixels(pixels, 90)
+			pixels = day20_rotatePixels90Degrees(pixels)
 		}
 
 		if len(monsters) > 0 {
 			break
 		}
-		pixels = day20_flipPixels(pixels, false)
+		pixels = day20_reflectPixelsAroundHorizontalAxis(pixels)
 	}
 
 	log.Debugf("Found %d Seamonsters!\n", len(monsters))
@@ -245,31 +169,132 @@ func day20_part2(input []string) (string, error) {
 	return fmt.Sprintf("%d", result), nil
 }
 
-func day20_pixelsToString(pixels [][]rune) string {
+type day20_pixels [][]rune
+
+func (p day20_pixels) String() string {
 	var b strings.Builder
-	for i, row := range pixels {
+	for i, row := range p {
 		b.WriteString(string(row))
-		if i != len(pixels)-1 {
+		if i != len(p)-1 {
 			b.WriteString("\n")
 		}
 	}
 	return b.String()
 }
 
-func day20_findSeamonsters(pixels [][]rune) [][]int {
+func (p day20_pixels) GetBorder(direction int) string {
+	switch direction {
+
+	case day20_TOP:
+		return string(p[0])
+
+	case day20_RIGHT:
+		px := make([]rune, 0, len(p))
+		for i := 0; i < len(p); i++ {
+			px = append(px, p[i][len(p[i])-1])
+		}
+		return string(px)
+
+	case day20_LEFT:
+		px := make([]rune, 0, len(p))
+		for i := 0; i < len(p); i++ {
+			px = append(px, p[i][0])
+		}
+		return string(px)
+
+	case day20_BOTTOM:
+		return string(p[len(p)-1])
+	}
+	return ""
+}
+
+type day20_tile struct {
+	Id           int
+	Pixels       *day20_pixels
+	Orientations []day20_pixels
+	Neighbors    []*day20_tile /* 0 = TOP, 1 = RIGHT, 2 = BOTTOM, 3 = LEFT */
+}
+
+func (t day20_tile) FindNeighbor(direction int, tiles map[int]*day20_tile) (*day20_tile, int) {
+	if t.Pixels == nil {
+		panic("Can't find neighbor for a tile without a pinned orientation!")
+	}
+	border := t.Pixels.GetBorder(direction)
+
+	oppositeDirection := (direction + 2) % 4
+
+	for _, tile := range tiles {
+		if tile.Pixels != nil {
+			if tile.Pixels.GetBorder(oppositeDirection) == border {
+				return tile, -1
+			}
+		} else {
+			for o, pixels := range tile.Orientations {
+				if pixels.GetBorder(oppositeDirection) == border {
+					return tile, o
+				}
+			}
+		}
+	}
+	return nil, -1
+}
+
+func NewTile(id int, pixels day20_pixels) *day20_tile {
+	tile := day20_tile{
+		Id:           id,
+		Orientations: make([]day20_pixels, 0, 8),
+		Neighbors:    make([]*day20_tile, 4),
+	}
+
+	tile.Orientations = append(tile.Orientations, pixels)
+
+	for i := 0; i < 7; i++ {
+		var newPixels day20_pixels
+		if i == 3 {
+			newPixels = day20_reflectPixelsAroundHorizontalAxis(pixels)
+		} else {
+			newPixels = day20_rotatePixels90Degrees(pixels)
+		}
+		tile.Orientations = append(tile.Orientations, newPixels)
+		pixels = newPixels
+	}
+	return &tile
+}
+
+func day20_rotatePixels90Degrees(pixels day20_pixels) day20_pixels {
+	newPixels := make(day20_pixels, len(pixels))
+	for i := 0; i < len(pixels); i++ {
+		newPixels[i] = make([]rune, len(pixels))
+		for j := 0; j < len(pixels); j++ {
+			newPixels[i][j] = pixels[len(pixels)-j-1][i]
+		}
+	}
+	return newPixels
+}
+
+func day20_reflectPixelsAroundHorizontalAxis(pixels day20_pixels) day20_pixels {
+	newPixels := make(day20_pixels, len(pixels))
+	copy(newPixels, pixels)
+	for j := 0; j < len(newPixels)/2; j++ {
+		newPixels[j], newPixels[len(newPixels)-j-1] = newPixels[len(newPixels)-j-1], newPixels[j]
+	}
+	return newPixels
+}
+
+func day20_findSeamonsters(pixels day20_pixels) [][]int {
 
 	monsters := make([][]int, 0)
 	for i := 0; i < len(pixels)-2; i++ {
-		s := 0
-		for s < len(pixels[i])-20 {
-			if m := day20_seamonsterRegex_row2.FindAllStringIndex(string(pixels[i+1])[s:], 1); m != nil {
-				if n := day20_seamonsterRegex_row1.FindAllStringIndex(string(pixels[i][s+m[0][0]:s+m[0][1]]), 1); n != nil {
-					if o := day20_seamonsterRegex_row3.FindAllStringIndex(string(pixels[i+2][s+m[0][0]:s+m[0][1]]), 1); o != nil {
-						log.Debugf("found row3 match at %d,%d\n", i, s+m[0][0])
-						monsters = append(monsters, []int{i, s + m[0][0], s + m[0][1]})
+		left := 0
+		for left < len(pixels[i])-20 {
+			if m := day20_seamonsterRegex_row2.FindAllStringIndex(string(pixels[i+1])[left:], 1); m != nil {
+				if n := day20_seamonsterRegex_row1.FindAllStringIndex(string(pixels[i][left+m[0][0]:left+m[0][1]]), 1); n != nil {
+					if o := day20_seamonsterRegex_row3.FindAllStringIndex(string(pixels[i+2][left+m[0][0]:left+m[0][1]]), 1); o != nil {
+						log.Debugf("Found Seamonster at %d,%d\n", i, left+m[0][0])
+						monsters = append(monsters, []int{i, left + m[0][0], left + m[0][1]})
 					}
 				}
-				s = s + m[0][0] + 1
+				left = left + m[0][0] + 1
 			} else {
 				break
 			}
@@ -279,29 +304,19 @@ func day20_findSeamonsters(pixels [][]rune) [][]int {
 	return monsters
 }
 
-func day20_replaceSeamonstersAndCount(pixels [][]rune, monsters [][]int) int {
+func day20_replaceSeamonstersAndCount(pixels day20_pixels, monsters [][]int) int {
 
 	for i := 0; i < len(monsters); i++ {
-		r, s := monsters[i][0], monsters[i][1]
-		for j := 0; j < len(day20_seamonsterReplacements); j++ {
-			for _, n := range day20_seamonsterReplacements[j] {
-				pixels[r+j][s+n] = 'O'
+		row, left := monsters[i][0], monsters[i][1]
+		for j := 0; j < len(day20_seamonsterPieces); j++ {
+			for _, k := range day20_seamonsterPieces[j] {
+				pixels[row+j][left+k] = 'O'
 			}
 		}
 	}
 
-	// for i := 0; i < len(pixels); i++ {
-	// 	for j := 0; j < len(pixels); j++ {
-	// 		if pixels[i][j] == '#' {
-	// 			pixels[i][j] = '.'
-	// 		} else if pixels[i][j] == '.' {
-	// 			pixels[i][j] = ' '
-	// 		}
-	// 	}
-	// }
-
 	log.Debug("\n\n")
-	log.Debugln(day20_pixelsToString(pixels))
+	log.Debugln(pixels)
 	log.Debug("\n\n")
 
 	var count int
@@ -316,322 +331,46 @@ func day20_replaceSeamonstersAndCount(pixels [][]rune, monsters [][]int) int {
 	return count
 }
 
-/*
-                  #
-#    ##    ##    ###
- #  #  #  #  #  #
-*/
+const day20_TOP = 0
+const day20_RIGHT = 1
+const day20_BOTTOM = 2
+const day20_LEFT = 3
+
+var day20_DIRECTIONS = []int{day20_TOP, day20_RIGHT, day20_BOTTOM, day20_LEFT}
+var day20_DIR_NAMES = []string{"TOP", "RIGHT", "BOTTOM", "LEFT"}
 
 var day20_seamonsterRegex_row1 = regexp.MustCompile(`..................#.`)
 var day20_seamonsterRegex_row2 = regexp.MustCompile(`#....##....##....###`)
 var day20_seamonsterRegex_row3 = regexp.MustCompile(`.#..#..#..#..#..#...`)
-var day20_seamonsterReplacements = [][]int{
+var day20_seamonsterPieces = [][]int{
 	[]int{18},
 	[]int{0, 5, 6, 11, 12, 17, 18, 19},
 	[]int{1, 4, 7, 10, 13, 16},
 }
 
-func day20_addNeighbor(id1 int, id2 int, id1Border int, id2Rotation int, id2Flip bool) {
-	tile1 := tiles[id1]
-	tile2 := tiles[id2]
-
-	if tile1.Neighbors[id1Border] == tile2 {
-		return
-	} else if tile1.Neighbors[id1Border] != nil {
-		panic(fmt.Sprintf("ALREADY USED THIS BORDER! id1=%d, id2=%d, id1Border=%d, id2Rotation=%d, id2Flip=%v, neighbor=%d\n", id1, id2, id1Border, id2Rotation, id2Flip, tile1.Neighbors[id1Border].Id))
-	}
-
-	if id2Rotation != 0 {
-		log.Debugf("ROTATING %d DEGREES:\n\n", id2Rotation)
-		tile2.Rotate(id2Rotation)
-		log.Debugf("%s\n\n", tile2)
-		log.Debugf("%s\n\n", day20_bordersToString(tile2.Borders))
-	}
-	if id2Flip {
-		log.Debug("FLIPPING:\n\n")
-		tile2.Flip(id1Border%2 == 0)
-		log.Debugf("%s\n\n", tile2)
-		log.Debugf("%s\n\n", day20_bordersToString(tile2.Borders))
-	}
-	tile2.OrientationLocked = true
-	tile1.Neighbors[id1Border] = tile2
-	tile2.Neighbors[(id1Border+2)%4] = tile1
-}
-
-func day20_findNeighbor(dir int, tileId int) (id int, rotation int, flip bool, ok bool) {
-	log.Debugf("**********\nFINDING %s NEIGHBOR FOR %d...\n", dirToName(dir), tileId)
-	tile := tiles[tileId]
-	if tile.Neighbors[dir] != nil {
-		log.Debugf("- FOUND CACHED NEIGHBOR: %d\n", tile.Neighbors[dir].Id)
-		return tile.Neighbors[dir].Id, 0, false, true
-	}
-
-	border := tile.Borders[dir]
-
-	var borderPos int
-	var reversed bool
-	var matched bool
-	for tId, t := range tiles {
-		if tId == tileId {
-			continue
-		}
-
-		if t.OrientationLocked {
-			oppositeBorder := (dir + 2) % 4
-			log.Debugf("********** ORIENTATION IS LOCKED! ID=%d, dir=%d, opp=%d\n", tId, dir, oppositeBorder)
-			if t.Borders[oppositeBorder] == border {
-				if t.Neighbors[oppositeBorder] != nil {
-					panic(fmt.Sprintf("ALREADY USED THIS BORDER! id=%d, tileId=%d, dir=%d, bdr=%d, neighborId=%d\n", id, tileId, dir, oppositeBorder, t.Neighbors[oppositeBorder].Id))
-				}
-				return tId, 0, false, true
-				// log.Debugf("FOUND MATCH for %d(%s): %d(%s)\n", tileId, dirToName(dir), tId, dirToName(pos))
-			} else {
-				continue
-			}
-		}
-
-		for pos, b := range t.Borders {
-			if b == border {
-				log.Debugf("FOUND MATCH for %d(%s): %d(%s)\n", tileId, dirToName(dir), tId, dirToName(pos))
-				matched = true
-				id = tId
-				borderPos = pos
-				reversed = false
-				break
-			} else if day20_strRev(b) == border {
-				log.Debugf("FOUND MATCH for %d(%s): %d(%s)[FLIPPED]\n", tileId, dirToName(dir), tId, dirToName(pos))
-				matched = true
-				id = tId
-				borderPos = pos
-				reversed = true
-				break
-			} else {
-				log.Debugf("  >%d.%6s  does not match %d.%6s - %s != %s\n", tId, dirToName(pos), tileId, dirToName(dir), b, border)
-				log.Debugf("  >%d.%6s^ does not match %d.%6s - %s != %s\n", tId, dirToName(pos), tileId, dirToName(dir), day20_strRev(b), border)
-			}
-		}
-		if matched {
-			break
-		}
-	}
-
-	if matched {
-		if dir == borderPos {
-			rotation = 180
-		} else if dir == (borderPos+1)%4 {
-			rotation = 270
-		} else if dir == (borderPos+2)%4 {
-			rotation = 0
-		} else if dir == (borderPos+3)%4 {
-			rotation = 90
-		}
-
-		log.Debugf("DIR: %d, BORDER_POS: %d, REVERSED: %v", dir, borderPos, reversed)
-		flip = reversed
-		if (dir < 2 && borderPos < 2) || (dir >= 2 && borderPos >= 2) {
-			flip = !flip
-			log.Debugf(", FLIP: %v", flip)
-		}
-		log.Debugln()
-		return id, rotation, flip, true
-	}
-
-	return 0, 0, false, false
-}
-
 func day20_parse(input []string) map[int]*day20_tile {
 	tiles := make(map[int]*day20_tile)
 
-	var top strings.Builder
-	var right strings.Builder
-	var bottom strings.Builder
-	var left strings.Builder
 	var i int
 	for i < len(input) {
-		tile := day20_tile{
-			Pixels:    make([][]rune, 0, pixelsPerRow),
-			Borders:   make([]string, 4),
-			Neighbors: make([]*day20_tile, 4),
-		}
-		fmt.Sscanf(input[i], "Tile %d:", &tile.Id)
+		var id int
+		fmt.Sscanf(input[i], "Tile %d:", &id)
 		i++
+		pixels := make(day20_pixels, 0)
 		for ; i < len(input) && input[i] != ""; i++ {
-			row := make([]rune, 0, pixelsPerRow)
+			row := make([]rune, 0)
 			for _, p := range input[i] {
 				row = append(row, rune(p))
 			}
-			tile.Pixels = append(tile.Pixels, row)
+			pixels = append(pixels, row)
 		}
 		i++
-
-		for j := 0; j < pixelsPerRow; j++ {
-			top.WriteRune(tile.Pixels[0][j])
-			bottom.WriteRune(tile.Pixels[pixelsPerRow-1][j])
-			left.WriteRune(tile.Pixels[j][0])
-			right.WriteRune(tile.Pixels[j][pixelsPerRow-1])
-		}
-		tile.Borders[day20_TOP] = top.String()
-		tile.Borders[day20_RIGHT] = right.String()
-		tile.Borders[day20_BOTTOM] = bottom.String()
-		tile.Borders[day20_LEFT] = left.String()
-
-		tiles[tile.Id] = &tile
-
-		top.Reset()
-		right.Reset()
-		bottom.Reset()
-		left.Reset()
+		tiles[id] = NewTile(id, pixels)
 	}
 	return tiles
-}
-
-type day20_tile struct {
-	Id                int
-	Pixels            [][]rune
-	Borders           []string      /* 0 = TOP, 1 = RIGHT, 2 = BOTTOM, 3 = LEFT */
-	Neighbors         []*day20_tile /* 0 = TOP, 1 = RIGHT, 2 = BOTTOM, 3 = LEFT */
-	OrientationLocked bool
-}
-
-func (t day20_tile) String() string {
-	var b strings.Builder
-	for _, row := range t.Pixels {
-		for _, p := range row {
-			b.WriteRune(p)
-		}
-		b.WriteString("\n")
-	}
-	return b.String()
-}
-
-func (t *day20_tile) Flip(horizontal bool) {
-	t.Pixels = day20_flipPixels(t.Pixels, horizontal)
-	if horizontal {
-		t.Borders = []string{
-			day20_strRev(t.Borders[day20_TOP]),    // TOP
-			t.Borders[day20_LEFT],                 // RIGHT
-			day20_strRev(t.Borders[day20_BOTTOM]), // BOTTOM
-			t.Borders[day20_RIGHT],                // LEFT
-		}
-	} else {
-		t.Borders = []string{
-			t.Borders[day20_BOTTOM],              // TOP
-			day20_strRev(t.Borders[day20_RIGHT]), // RIGHT
-			t.Borders[day20_TOP],                 // BOTTOM
-			day20_strRev(t.Borders[day20_LEFT]),  // LEFT
-		}
-	}
-}
-
-func (t *day20_tile) Rotate(degrees int) {
-	t.Pixels = day20_rotatePixels(t.Pixels, degrees)
-	switch degrees {
-	case 90:
-		t.Borders = []string{
-			day20_strRev(t.Borders[day20_LEFT]),  // TOP
-			t.Borders[day20_TOP],                 // RIGHT
-			day20_strRev(t.Borders[day20_RIGHT]), // BOTTOM
-			t.Borders[day20_BOTTOM],              // LEFT
-		}
-	case 180:
-		t.Borders = []string{
-			day20_strRev(t.Borders[day20_BOTTOM]), // TOP
-			day20_strRev(t.Borders[day20_LEFT]),   // RIGHT
-			day20_strRev(t.Borders[day20_TOP]),    // BOTTOM
-			day20_strRev(t.Borders[day20_RIGHT]),  // BOTTOM
-		}
-	case 270:
-		t.Borders = []string{
-			t.Borders[day20_RIGHT],                // TOP
-			day20_strRev(t.Borders[day20_BOTTOM]), // RIGHT
-			t.Borders[day20_LEFT],                 // BOTTOM
-			day20_strRev(t.Borders[day20_TOP]),    // LEFT
-		}
-	}
-}
-
-func day20_rotatePixels(pixels [][]rune, degrees int) [][]rune {
-	switch degrees {
-	case 90:
-		newPixels := make([][]rune, len(pixels))
-		for i := 0; i < len(pixels); i++ {
-			newPixels[i] = make([]rune, len(pixels))
-			for j := 0; j < len(pixels); j++ {
-				newPixels[i][j] = pixels[len(pixels)-j-1][i]
-			}
-		}
-		pixels = newPixels
-	case 180:
-		for i := 0; i < len(pixels); i++ {
-			for j := 0; j < len(pixels)/2; j++ {
-				pixels[i][j], pixels[i][len(pixels)-j-1] = pixels[i][len(pixels)-j-1], pixels[i][j]
-			}
-		}
-		for i := 0; i < len(pixels)/2; i++ {
-			pixels[i], pixels[len(pixels)-i-1] = pixels[len(pixels)-i-1], pixels[i]
-		}
-	case 270:
-		newPixels := make([][]rune, len(pixels))
-		for i := 0; i < len(pixels); i++ {
-			newPixels[i] = make([]rune, len(pixels))
-			for j := 0; j < len(pixels); j++ {
-				newPixels[i][j] = pixels[j][len(pixels)-i-1]
-			}
-		}
-		pixels = newPixels
-	}
-	return pixels
-}
-
-func day20_flipPixels(pixels [][]rune, horizontal bool) [][]rune {
-	if horizontal {
-		for i := 0; i < len(pixels); i++ {
-			for j := 0; j < len(pixels)/2; j++ {
-				pixels[i][j], pixels[i][len(pixels)-j-1] = pixels[i][len(pixels)-j-1], pixels[i][j]
-			}
-		}
-	} else {
-		for i := 0; i < len(pixels)/2; i++ {
-			pixels[i], pixels[len(pixels)-i-1] = pixels[len(pixels)-i-1], pixels[i]
-		}
-	}
-	return pixels
-}
-
-func day20_strRev(str string) string {
-	r := []rune(str)
-	for i := 0; i < len(r)/2; i++ {
-		r[i], r[len(r)-i-1] = r[len(r)-i-1], r[i]
-	}
-	return string(r)
-}
-
-func day20_bordersToString(b []string) string {
-	var s strings.Builder
-	s.WriteString(b[day20_TOP])
-	s.WriteString("\n")
-	for i := 1; i < pixelsPerRow-1; i++ {
-		s.WriteByte(b[day20_LEFT][i])
-		s.WriteString(fmt.Sprintf("%*s", pixelsPerRow-2, ""))
-		s.WriteByte(b[day20_RIGHT][i])
-		s.WriteString("\n")
-	}
-	for i := 0; i < pixelsPerRow; i++ {
-		s.WriteByte(b[day20_BOTTOM][i])
-	}
-	return s.String()
 }
 
 func init() {
 	registerChallengeFunc(20, 1, "day20.txt", day20_part1)
 	registerChallengeFunc(20, 2, "day20.txt", day20_part2)
 }
-
-func dirToName(dir int) string {
-	return ([]string{"TOP", "RIGHT", "BOTTOM", "LEFT"})[dir]
-}
-
-const day20_TOP = 0
-const day20_RIGHT = 1
-const day20_BOTTOM = 2
-const day20_LEFT = 3

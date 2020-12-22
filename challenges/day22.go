@@ -52,7 +52,9 @@ var gameCount = 0
 func day22_part2(input []string) (string, error) {
 	deck1, deck2 := day22_parse(input)
 
-	_, points := playGame(deck1, deck2)
+	winner, points := playGame(deck1, deck2)
+
+	log.Debugf("\n\nPLAYER %d WINS!\n\n", winner)
 
 	return fmt.Sprintf("%d", points), nil
 }
