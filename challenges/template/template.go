@@ -1,10 +1,11 @@
-package challenges
+package challenges2021
 
 import (
 	"fmt"
 	"strconv"
 
-	"github.com/davejhilton/adventofcode2020/log"
+	"github.com/davejhilton/adventofcode/challenges"
+	"github.com/davejhilton/adventofcode/log"
 )
 
 func day000_part1(input []string) (string, error) {
@@ -33,6 +34,6 @@ func day000_parse(input []string) []int {
 }
 
 func init() {
-	registerChallengeFunc(000, 1, "day000.txt", day000_part1)
-	registerChallengeFunc(000, 2, "day000.txt", day000_part2)
+	challenges.RegisterChallengeFunc(2020, 000, 1, "day000.txt", day000_part1)
+	challenges.RegisterChallengeFunc(2020, 000, 2, "day000.txt", day000_part2)
 }

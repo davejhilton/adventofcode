@@ -1,15 +1,15 @@
-package challenges
+package challenges2020
 
 import (
 	"fmt"
 	"regexp"
 	"strings"
 
-	"github.com/davejhilton/adventofcode2020/log"
+	"github.com/davejhilton/adventofcode/challenges"
+	"github.com/davejhilton/adventofcode/log"
 )
 
 func day20_part1(input []string) (string, error) {
-
 	topLeftCorner := day20_arrangeTiles(input)
 
 	// Now find all the corners, and multiply their IDs
@@ -46,7 +46,7 @@ func day20_arrangeTiles(input []string) *day20_tile {
 	tiles := day20_parse(input)
 
 	// FIRST, find all the "Neighbor" relations for every tile
-	var changed = true
+	changed := true
 	var firstTile *day20_tile
 	for changed {
 		changed = false
@@ -126,9 +126,7 @@ func day20_part2(input []string) (string, error) {
 			curTile := leftTile
 			for curTile != nil {
 				pix := *curTile.Pixels
-				for _, p := range pix[pixelRow][1 : tileSize-1] {
-					row = append(row, p)
-				}
+				row = append(row, pix[pixelRow][1:tileSize-1]...)
 				curTile = curTile.Neighbors[day20_RIGHT]
 			}
 			pixels = append(pixels, row)
@@ -282,7 +280,6 @@ func day20_reflectPixelsAroundHorizontalAxis(pixels day20_pixels) day20_pixels {
 }
 
 func day20_findSeamonsters(pixels day20_pixels) [][]int {
-
 	monsters := make([][]int, 0)
 	for i := 0; i < len(pixels)-2; i++ {
 		left := 0
@@ -305,7 +302,6 @@ func day20_findSeamonsters(pixels day20_pixels) [][]int {
 }
 
 func day20_replaceSeamonstersAndCount(pixels day20_pixels, monsters [][]int) int {
-
 	for i := 0; i < len(monsters); i++ {
 		row, left := monsters[i][0], monsters[i][1]
 		for j := 0; j < len(day20_seamonsterPieces); j++ {
@@ -331,22 +327,28 @@ func day20_replaceSeamonstersAndCount(pixels day20_pixels, monsters [][]int) int
 	return count
 }
 
-const day20_TOP = 0
-const day20_RIGHT = 1
-const day20_BOTTOM = 2
-const day20_LEFT = 3
+const (
+	day20_TOP    = 0
+	day20_RIGHT  = 1
+	day20_BOTTOM = 2
+	day20_LEFT   = 3
+)
 
-var day20_DIRECTIONS = []int{day20_TOP, day20_RIGHT, day20_BOTTOM, day20_LEFT}
-var day20_DIR_NAMES = []string{"TOP", "RIGHT", "BOTTOM", "LEFT"}
+var (
+	day20_DIRECTIONS = []int{day20_TOP, day20_RIGHT, day20_BOTTOM, day20_LEFT}
+	day20_DIR_NAMES  = []string{"TOP", "RIGHT", "BOTTOM", "LEFT"}
+)
 
-var day20_seamonsterRegex_row1 = regexp.MustCompile(`..................#.`)
-var day20_seamonsterRegex_row2 = regexp.MustCompile(`#....##....##....###`)
-var day20_seamonsterRegex_row3 = regexp.MustCompile(`.#..#..#..#..#..#...`)
-var day20_seamonsterPieces = [][]int{
-	[]int{18},
-	[]int{0, 5, 6, 11, 12, 17, 18, 19},
-	[]int{1, 4, 7, 10, 13, 16},
-}
+var (
+	day20_seamonsterRegex_row1 = regexp.MustCompile(`..................#.`)
+	day20_seamonsterRegex_row2 = regexp.MustCompile(`#....##....##....###`)
+	day20_seamonsterRegex_row3 = regexp.MustCompile(`.#..#..#..#..#..#...`)
+	day20_seamonsterPieces     = [][]int{
+		{18},
+		{0, 5, 6, 11, 12, 17, 18, 19},
+		{1, 4, 7, 10, 13, 16},
+	}
+)
 
 func day20_parse(input []string) map[int]*day20_tile {
 	tiles := make(map[int]*day20_tile)
@@ -371,6 +373,6 @@ func day20_parse(input []string) map[int]*day20_tile {
 }
 
 func init() {
-	registerChallengeFunc(20, 1, "day20.txt", day20_part1)
-	registerChallengeFunc(20, 2, "day20.txt", day20_part2)
+	challenges.RegisterChallengeFunc(2020, 20, 1, "day20.txt", day20_part1)
+	challenges.RegisterChallengeFunc(2020, 20, 2, "day20.txt", day20_part2)
 }

@@ -1,10 +1,11 @@
-package challenges
+package challenges2020
 
 import (
 	"fmt"
 	"strconv"
 
-	"github.com/davejhilton/adventofcode2020/log"
+	"github.com/davejhilton/adventofcode/challenges"
+	"github.com/davejhilton/adventofcode/log"
 )
 
 func day22_part1(input []string) (string, error) {
@@ -60,7 +61,6 @@ func day22_part2(input []string) (string, error) {
 }
 
 func playGame(deck1 []int, deck2 []int) (int, int) {
-
 	gameCount++
 	log.Debugf("GAME %d\n", gameCount)
 	log.Debugf("PLAYER 1: %v\n", deck1)
@@ -128,12 +128,11 @@ func playGame(deck1 []int, deck2 []int) (int, int) {
 }
 
 func day22_parse(input []string) ([]int, []int) {
-
 	var p1Cards []int
 
 	cards := make([]int, 0)
 	for i := 1; i < len(input); i++ {
-		var s = input[i]
+		s := input[i]
 		if s == "" {
 			i++
 			p1Cards = cards
@@ -147,6 +146,6 @@ func day22_parse(input []string) ([]int, []int) {
 }
 
 func init() {
-	registerChallengeFunc(22, 1, "day22.txt", day22_part1)
-	registerChallengeFunc(22, 2, "day22.txt", day22_part2)
+	challenges.RegisterChallengeFunc(2020, 22, 1, "day22.txt", day22_part1)
+	challenges.RegisterChallengeFunc(2020, 22, 2, "day22.txt", day22_part2)
 }

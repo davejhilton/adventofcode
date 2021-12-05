@@ -1,9 +1,10 @@
-package challenges
+package challenges2020
 
 import (
 	"fmt"
 
-	"github.com/davejhilton/adventofcode2020/log"
+	"github.com/davejhilton/adventofcode/challenges"
+	"github.com/davejhilton/adventofcode/log"
 )
 
 //  Z  Y  X
@@ -23,21 +24,21 @@ func day17_part1(input []string) (string, error) {
 		log.Debugf("zSize: %d\n", zSize)
 		log.Debugf("size: %d\n", size)
 		// FIRST: expand the grid!
-		newZSpace := make([][][]day17_value, zSize, zSize)
-		newZSpace[0] = make([][]day17_value, size, size)
-		newZSpace[zSize-1] = make([][]day17_value, size, size)
+		newZSpace := make([][][]day17_value, zSize)
+		newZSpace[0] = make([][]day17_value, size)
+		newZSpace[zSize-1] = make([][]day17_value, size)
 		for i := 0; i < size; i++ {
-			newZSpace[0][i] = make([]day17_value, size, size)
-			newZSpace[zSize-1][i] = make([]day17_value, size, size)
+			newZSpace[0][i] = make([]day17_value, size)
+			newZSpace[zSize-1][i] = make([]day17_value, size)
 		}
 		for oldZ, ySpace := range zSpace {
 			z := oldZ + 1
-			newZSpace[z] = make([][]day17_value, size, size)
-			newZSpace[z][0] = make([]day17_value, size, size)
-			newZSpace[z][size-1] = make([]day17_value, size, size)
+			newZSpace[z] = make([][]day17_value, size)
+			newZSpace[z][0] = make([]day17_value, size)
+			newZSpace[z][size-1] = make([]day17_value, size)
 			for oldY, xSpace := range ySpace {
 				y := oldY + 1
-				newZSpace[z][y] = make([]day17_value, size, size)
+				newZSpace[z][y] = make([]day17_value, size)
 				log.Debugf("zlen: %d, ylen: %d, xlen: %d\n", len(newZSpace), len(newZSpace[z]), len(newZSpace[z][y]))
 				for oldX, active := range xSpace {
 					x := oldX + 1
@@ -47,11 +48,11 @@ func day17_part1(input []string) (string, error) {
 			}
 		}
 		// NEXT: clone the grid
-		zSpace = make([][][]day17_value, zSize, zSize)
+		zSpace = make([][][]day17_value, zSize)
 		for z, ySpace := range newZSpace {
-			zSpace[z] = make([][]day17_value, size, size)
+			zSpace[z] = make([][]day17_value, size)
 			for y, xSpace := range ySpace {
-				zSpace[z][y] = make([]day17_value, size, size)
+				zSpace[z][y] = make([]day17_value, size)
 				for x, active := range xSpace {
 					zSpace[z][y][x] = active
 				}
@@ -129,37 +130,37 @@ func day17_part2(input []string) (string, error) {
 		// log.Debugf("size: %d\n", size)
 
 		// FIRST: expand the grid!
-		newWSpace := make([][][][]day17_value, wSize, wSize)
-		newWSpace[0] = make([][][]day17_value, wSize, wSize)
-		newWSpace[wSize-1] = make([][][]day17_value, wSize, wSize)
+		newWSpace := make([][][][]day17_value, wSize)
+		newWSpace[0] = make([][][]day17_value, wSize)
+		newWSpace[wSize-1] = make([][][]day17_value, wSize)
 		for i := 0; i < wSize; i++ {
-			newWSpace[0][i] = make([][]day17_value, size, size)
-			newWSpace[wSize-1][i] = make([][]day17_value, size, size)
+			newWSpace[0][i] = make([][]day17_value, size)
+			newWSpace[wSize-1][i] = make([][]day17_value, size)
 		}
 		for oldW, zSpace := range wSpace {
 			w := oldW + 1
-			newWSpace[w] = make([][][]day17_value, wSize, wSize)
-			newWSpace[w][0] = make([][]day17_value, size, size)
-			newWSpace[w][wSize-1] = make([][]day17_value, size, size)
+			newWSpace[w] = make([][][]day17_value, wSize)
+			newWSpace[w][0] = make([][]day17_value, size)
+			newWSpace[w][wSize-1] = make([][]day17_value, size)
 			for i := 0; i < wSize; i++ {
-				newWSpace[0][i] = make([][]day17_value, size, size)
-				newWSpace[w][i] = make([][]day17_value, size, size)
-				newWSpace[wSize-1][i] = make([][]day17_value, size, size)
+				newWSpace[0][i] = make([][]day17_value, size)
+				newWSpace[w][i] = make([][]day17_value, size)
+				newWSpace[wSize-1][i] = make([][]day17_value, size)
 				for j := 0; j < size; j++ {
-					newWSpace[0][i][j] = make([]day17_value, size, size)
-					newWSpace[w][i][j] = make([]day17_value, size, size)
-					newWSpace[wSize-1][i][j] = make([]day17_value, size, size)
+					newWSpace[0][i][j] = make([]day17_value, size)
+					newWSpace[w][i][j] = make([]day17_value, size)
+					newWSpace[wSize-1][i][j] = make([]day17_value, size)
 				}
 			}
 			for oldZ, ySpace := range zSpace {
 				z := oldZ + 1
-				newWSpace[w][z] = make([][]day17_value, size, size)
-				newWSpace[w][z][0] = make([]day17_value, size, size)
-				newWSpace[w][z][size-1] = make([]day17_value, size, size)
+				newWSpace[w][z] = make([][]day17_value, size)
+				newWSpace[w][z][0] = make([]day17_value, size)
+				newWSpace[w][z][size-1] = make([]day17_value, size)
 				for oldY, xSpace := range ySpace {
 					y := oldY + 1
 					_ = y
-					newWSpace[w][z][y] = make([]day17_value, size, size)
+					newWSpace[w][z][y] = make([]day17_value, size)
 					// log.Debugf("wlen: %d, zlen: %d, ylen: %d, xlen: %d\n", len(newWSpace), len(newWSpace[w]), len(newWSpace[w][z]), len(newWSpace[w][z][y]))
 					for oldX, active := range xSpace {
 						x := oldX + 1
@@ -170,14 +171,14 @@ func day17_part2(input []string) (string, error) {
 			}
 		}
 		// NEXT: clone the grid
-		wSpace = make([][][][]day17_value, wSize, wSize)
+		wSpace = make([][][][]day17_value, wSize)
 		for w, zSpace := range newWSpace {
-			wSpace[w] = make([][][]day17_value, wSize, wSize)
+			wSpace[w] = make([][][]day17_value, wSize)
 			for z, ySpace := range zSpace {
 				// log.Debugf("w/wlen/newwlen: %d/%d/%d, z/zlen/newzlen: %d/%d/%d\n", w, len(wSpace), len(newWSpace), z, len(wSpace[w]), len(newWSpace[w]))
-				wSpace[w][z] = make([][]day17_value, size, size)
+				wSpace[w][z] = make([][]day17_value, size)
 				for y, xSpace := range ySpace {
-					wSpace[w][z][y] = make([]day17_value, size, size)
+					wSpace[w][z][y] = make([]day17_value, size)
 					for x, active := range xSpace {
 						wSpace[w][z][y][x] = active
 					}
@@ -230,7 +231,6 @@ func day17_part2(input []string) (string, error) {
 					}
 				}
 			}
-
 		}
 
 		log.Debugf("After Cycle #%d:\n", cycle+1)
@@ -285,7 +285,6 @@ func print4DSpace(wSpace [][][][]day17_value) {
 }
 
 func day17_parseInput(input []string) [][][]day17_value {
-
 	y := make([][]day17_value, 0, len(input))
 	for _, line := range input {
 		x := make([]day17_value, 0, len(line))
@@ -302,6 +301,6 @@ func day17_parseInput(input []string) [][][]day17_value {
 }
 
 func init() {
-	registerChallengeFunc(17, 1, "day17.txt", day17_part1)
-	registerChallengeFunc(17, 2, "day17.txt", day17_part2)
+	challenges.RegisterChallengeFunc(2020, 17, 1, "day17.txt", day17_part1)
+	challenges.RegisterChallengeFunc(2020, 17, 2, "day17.txt", day17_part2)
 }

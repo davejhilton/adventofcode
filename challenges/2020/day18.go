@@ -1,11 +1,12 @@
-package challenges
+package challenges2020
 
 import (
 	"fmt"
 	"strconv"
 	"strings"
 
-	"github.com/davejhilton/adventofcode2020/log"
+	"github.com/davejhilton/adventofcode/challenges"
+	"github.com/davejhilton/adventofcode/log"
 )
 
 func day18_part1(input []string) (string, error) {
@@ -55,7 +56,7 @@ func day18_parse(input []string) []day18_token {
 				t := day18_token{Type: MULTIPLY}
 				exprStack[curIdx].SubTokens = append(exprStack[curIdx].SubTokens, t)
 			case '1', '2', '3', '4', '5', '6', '7', '8', '9', '0':
-				n, err := strconv.Atoi(fmt.Sprintf("%s", string(c)))
+				n, err := strconv.Atoi(string(c))
 				if err != nil {
 					fmt.Printf("PARSE ERROR: %s\n", err)
 				}
@@ -131,7 +132,7 @@ func (t day18_token) String() string {
 	case MULTIPLY:
 		str = "*"
 	default:
-		str = fmt.Sprintf("????%v", t)
+		str = fmt.Sprintf("????%s", t.Type)
 	}
 	return str
 }
@@ -156,7 +157,7 @@ func (t day18_token) Value() int {
 				} else if op == MULTIPLY {
 					value *= subT.Value()
 				} else {
-					fmt.Printf("WTF: got a %s (%s) without a preceeding Op?!?\n", subT.Type, subT.Value())
+					fmt.Printf("WTF: got a %s (%d) without a preceeding Op?!?\n", subT.Type, subT.Value())
 					break
 				}
 				op = ""
@@ -227,15 +228,17 @@ func (t day18_token) HandleAltPrecedence() day18_token {
 	return newT
 }
 
-const ROOT_EXPRESSION = "root"
-const NUMBER = "#"
-const ADD = "+"
-const MULTIPLY = "*"
-const OPEN_PAREN = "("
-const CLOSE_PAREN = ")"
-const PAREN_GROUP = "()"
+const (
+	ROOT_EXPRESSION = "root"
+	NUMBER          = "#"
+	ADD             = "+"
+	MULTIPLY        = "*"
+	OPEN_PAREN      = "("
+	CLOSE_PAREN     = ")"
+	PAREN_GROUP     = "()"
+)
 
 func init() {
-	registerChallengeFunc(18, 1, "day18.txt", day18_part1)
-	registerChallengeFunc(18, 2, "day18.txt", day18_part2)
+	challenges.RegisterChallengeFunc(2020, 18, 1, "day18.txt", day18_part1)
+	challenges.RegisterChallengeFunc(2020, 18, 2, "day18.txt", day18_part2)
 }

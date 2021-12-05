@@ -1,11 +1,12 @@
-package challenges
+package challenges2020
 
 import (
 	"fmt"
 	"math"
 	"strconv"
 
-	"github.com/davejhilton/adventofcode2020/log"
+	"github.com/davejhilton/adventofcode/challenges"
+	"github.com/davejhilton/adventofcode/log"
 )
 
 func day12_part1(input []string) (string, error) {
@@ -182,10 +183,12 @@ func day12_part2(input []string) (string, error) {
 	return fmt.Sprintf("%d", result), nil
 }
 
-const NORTH = 0
-const EAST = 1
-const SOUTH = 2
-const WEST = 3
+const (
+	NORTH = 0
+	EAST  = 1
+	SOUTH = 2
+	WEST  = 3
+)
 
 func day12_getDirectionName(d int) string {
 	switch d {
@@ -227,6 +230,6 @@ func day12_parseDirections(input []string) []day12_direction {
 }
 
 func init() {
-	registerChallengeFunc(12, 1, "day12.txt", day12_part1)
-	registerChallengeFunc(12, 2, "day12.txt", day12_part2)
+	challenges.RegisterChallengeFunc(2020, 12, 1, "day12.txt", day12_part1)
+	challenges.RegisterChallengeFunc(2020, 12, 2, "day12.txt", day12_part2)
 }

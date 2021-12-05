@@ -1,4 +1,4 @@
-package challenges
+package challenges2020
 
 import (
 	"fmt"
@@ -6,7 +6,8 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/davejhilton/adventofcode2020/log"
+	"github.com/davejhilton/adventofcode/challenges"
+	"github.com/davejhilton/adventofcode/log"
 )
 
 func day7_part1(input []string) (string, error) {
@@ -19,7 +20,7 @@ func day7_part1_efficient(input []string) (string, error) {
 
 	outer := make(map[string]bool)
 	log.Debugln()
-	for color, _ := range rules {
+	for color := range rules {
 		if found, known := outer[color]; !known {
 			log.Debugf("CHECKING %s:\n", color)
 			containsGold := day7_canContainGold_efficient(rules, color, &outer, "\t")
@@ -71,12 +72,13 @@ func day7_canContainGold_efficient(rules map[string]map[string]int, color string
 	return false
 }
 
+//lint:ignore U1000 this code is here as an example of the "simple" way to do this
 func day7_part1_simple(input []string) (string, error) {
 	rules := day7_parseRules(input)
 
 	outer := make(map[string]bool)
 	log.Debugln()
-	for color, _ := range rules {
+	for color := range rules {
 		log.Debugf("CHECKING %s:\n", color)
 		containsGold := day7_canContainGold_simple(rules, color, "\t")
 		if containsGold {
@@ -87,6 +89,7 @@ func day7_part1_simple(input []string) (string, error) {
 	return fmt.Sprintf("%d", len(outer)), nil
 }
 
+//lint:ignore U1000 this code is here as an example of the "simple" way to do this
 func day7_canContainGold_simple(rules map[string]map[string]int, color string, indent string) bool {
 	if contents, ok := rules[color]; ok {
 		if _, ok2 := contents["shiny gold"]; ok2 {
@@ -143,6 +146,6 @@ func day7_parseRules(input []string) map[string]map[string]int {
 }
 
 func init() {
-	registerChallengeFunc(7, 1, "day07.txt", day7_part1)
-	registerChallengeFunc(7, 2, "day07.txt", day7_part2)
+	challenges.RegisterChallengeFunc(2020, 7, 1, "day07.txt", day7_part1)
+	challenges.RegisterChallengeFunc(2020, 7, 2, "day07.txt", day7_part2)
 }

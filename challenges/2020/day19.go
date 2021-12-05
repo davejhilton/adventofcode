@@ -1,4 +1,4 @@
-package challenges
+package challenges2020
 
 import (
 	"fmt"
@@ -7,7 +7,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/davejhilton/adventofcode2020/log"
+	"github.com/davejhilton/adventofcode/challenges"
+	"github.com/davejhilton/adventofcode/log"
 )
 
 func day19_part1(input []string) (string, error) {
@@ -21,7 +22,6 @@ func day19_part2(input []string) (string, error) {
 }
 
 func countMatches(input []string, checkSpecialRules bool) int {
-
 	rules, messages := day19_parseInput(input)
 
 	possibilities := day19_expandRule(rules[0], rules, 0)
@@ -29,7 +29,7 @@ func countMatches(input []string, checkSpecialRules bool) int {
 	log.Debugln("Sorting...")
 	t1 := time.Now()
 	sort.Strings(possibilities)
-	log.Debugf("Sorted %d items in %v\n", len(possibilities), time.Now().Sub(t1))
+	log.Debugf("Sorted %d items in %v\n", len(possibilities), time.Since(t1))
 	inf := ""
 	if checkSpecialRules {
 		inf = "(well, infinite)"
@@ -117,7 +117,6 @@ func day19_check31(message string) bool {
 }
 
 func day19_parseInput(input []string) (map[int]day19_rule, []string) {
-
 	rules := make(map[int]day19_rule)
 	var i int
 	for i = 0; i < len(input); i++ {
@@ -135,7 +134,6 @@ func day19_parseInput(input []string) (map[int]day19_rule, []string) {
 }
 
 func day19_expandSequence(sequence day19_sequence, rules map[int]day19_rule, depth int) []string {
-
 	log.Debugf("%*sEXPANDING SEQ:  %s\n", 2*depth, "", sequence.String())
 	str := ""
 	results := make([]string, 0)
@@ -173,7 +171,6 @@ func day19_expandSequence(sequence day19_sequence, rules map[int]day19_rule, dep
 		}
 	}
 	return results
-
 }
 
 func day19_expandRule(rule day19_rule, rules map[int]day19_rule, depth int) []string {
@@ -272,10 +269,10 @@ func (t day19_token) String() string {
 }
 
 func init() {
-	registerChallengeFunc(19, 1, "day19.txt", day19_part1)
-	registerChallengeFunc(19, 2, "day19.txt", day19_part2)
+	challenges.RegisterChallengeFunc(2020, 19, 1, "day19.txt", day19_part1)
+	challenges.RegisterChallengeFunc(2020, 19, 2, "day19.txt", day19_part2)
 
-	resultsCache = make(map[int][]string, 0)
+	resultsCache = make(map[int][]string)
 }
 
 var resultsCache map[int][]string

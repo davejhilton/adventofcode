@@ -1,4 +1,4 @@
-package challenges
+package challenges2020
 
 import (
 	"fmt"
@@ -6,7 +6,8 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/davejhilton/adventofcode2020/log"
+	"github.com/davejhilton/adventofcode/challenges"
+	"github.com/davejhilton/adventofcode/log"
 )
 
 func day4_part1(input []string) (string, error) {
@@ -138,20 +139,21 @@ func (p day4_passport) DebugString(strict bool) string {
 		}
 		return log.Normal
 	}
-	handleEmpty := func(v interface{}) string {
+	handleEmpty := func(val interface{}) string {
 		result := ""
-		switch v.(type) {
+		switch v := val.(type) {
 		case string:
-			result = v.(string)
+			result = v
 		case int:
 			if v == 0 {
 				result = ""
 			} else {
-				result = fmt.Sprintf("%d", v.(int))
+				result = fmt.Sprintf("%d", v)
 			}
 		default:
 			result = fmt.Sprintf("%v", v)
 		}
+
 		if result == "" {
 			result = "---"
 		}
@@ -172,7 +174,6 @@ func (p day4_passport) DebugString(strict bool) string {
 }
 
 func (p day4_passport) Valid(strict bool) bool {
-
 	return p.validBirthYear(strict) &&
 		p.validIssueYear(strict) &&
 		p.validExpirationYear(strict) &&
@@ -255,6 +256,6 @@ func (p day4_passport) validCountryID(strict bool) bool {
 }
 
 func init() {
-	registerChallengeFunc(4, 1, "day04.txt", day4_part1)
-	registerChallengeFunc(4, 2, "day04.txt", day4_part2)
+	challenges.RegisterChallengeFunc(2020, 4, 1, "day04.txt", day4_part1)
+	challenges.RegisterChallengeFunc(2020, 4, 2, "day04.txt", day4_part2)
 }

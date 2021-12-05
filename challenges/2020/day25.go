@@ -1,23 +1,24 @@
-package challenges
+package challenges2020
 
 import (
 	"fmt"
 	"strconv"
 
-	"github.com/davejhilton/adventofcode2020/log"
+	"github.com/davejhilton/adventofcode/challenges"
+	"github.com/davejhilton/adventofcode/log"
 )
 
 func day25_part1(input []string) (string, error) {
 	pk1, pk2 := day25_parse(input)
 	_, _ = pk1, pk2
 
-	var subject = 7
-	var value = 1
-	var loopNum = 0
-	var divisor = 20201227
+	subject := 7
+	value := 1
+	loopNum := 0
+	divisor := 20201227
 
-	var pk1Loops = -1
-	var pk2Loops = -1
+	pk1Loops := -1
+	pk2Loops := -1
 
 	for pk1Loops == -1 && pk2Loops == -1 {
 		loopNum++
@@ -39,7 +40,7 @@ func day25_part1(input []string) (string, error) {
 		nLoops = pk2Loops
 	}
 
-	var value2 = 1
+	value2 := 1
 	for i := 0; i < nLoops; i++ {
 		value2 = day25_transform(value2, subject2, divisor)
 	}
@@ -68,6 +69,6 @@ func day25_parse(input []string) (int, int) {
 }
 
 func init() {
-	registerChallengeFunc(25, 1, "day25.txt", day25_part1)
-	registerChallengeFunc(25, 2, "day25.txt", day25_part2)
+	challenges.RegisterChallengeFunc(2020, 25, 1, "day25.txt", day25_part1)
+	challenges.RegisterChallengeFunc(2020, 25, 2, "day25.txt", day25_part2)
 }

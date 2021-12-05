@@ -9,6 +9,7 @@ import (
 )
 
 type Challenge struct {
+	Year          int
 	Day           int
 	Part          int
 	InputFileName string
@@ -16,15 +17,20 @@ type Challenge struct {
 	Exec          challengeFunc
 }
 
-func GetChallenge(day, part, exampleNumber int) (Challenge, error) {
-	d, ok := allChallenges[day]
-	if !ok || d == nil {
-		return Challenge{}, fmt.Errorf("Unknown Day: '%d'", day)
+func GetChallenge(year, day, part, exampleNumber int) (Challenge, error) {
+	y, ok := allChallenges[year]
+	if !ok || y == nil {
+		return Challenge{}, fmt.Errorf("unknown year: '%d'", year)
 	}
 
-	challenge, ok := allChallenges[day][part]
+	d, ok := allChallenges[year][day]
+	if !ok || d == nil {
+		return Challenge{}, fmt.Errorf("unknown day: Year '%d' Day '%d'", year, day)
+	}
+
+	challenge, ok := allChallenges[year][day][part]
 	if !ok {
-		return Challenge{}, fmt.Errorf("Unknown Challenge: Day '%d' Part '%d'", day, part)
+		return Challenge{}, fmt.Errorf("unknown challenge: Year '%d' Day '%d' Part '%d'", year, day, part)
 	}
 
 	if exampleNumber != -1 {
@@ -35,15 +41,20 @@ func GetChallenge(day, part, exampleNumber int) (Challenge, error) {
 	return challenge, nil
 }
 
-func registerChallengeFunc(day int, part int, inputFileName string, execFunc challengeFunc) {
+func RegisterChallengeFunc(year int, day int, part int, inputFileName string, execFunc challengeFunc) {
 	if allChallenges == nil {
-		allChallenges = make(map[int]map[int]Challenge)
+		allChallenges = make(map[int]map[int]map[int]Challenge)
 	}
-	_, ok := allChallenges[day]
+	_, ok := allChallenges[year]
 	if !ok {
-		allChallenges[day] = make(map[int]Challenge)
+		allChallenges[year] = make(map[int]map[int]Challenge)
 	}
-	allChallenges[day][part] = Challenge{
+	_, ok = allChallenges[year][day]
+	if !ok {
+		allChallenges[year][day] = make(map[int]Challenge)
+	}
+	allChallenges[year][day][part] = Challenge{
+		Year:          year,
 		Day:           day,
 		Part:          part,
 		InputFileName: inputFileName,
@@ -55,38 +66,41 @@ type challengeFunc func(input []string) (string, error)
 
 func (ch Challenge) Run() (string, error) {
 	if ch.Exec == nil {
-		return "", fmt.Errorf("Unknown Challenge")
+		return "", fmt.Errorf("unknown challenge")
 	}
 	var input []string
 	var err error
 	if ch.InputFileName != "" {
-		input, err = readInputFile(ch.InputFileName)
+		input, err = readInputFile(ch.Year, ch.InputFileName)
 		if err != nil {
 			return "", err
 		}
 		ch.Input = input
 	}
-	currentChallenge = &ch
+	CurrentChallenge = &ch
 	defer func() {
-		currentChallenge = nil
+		CurrentChallenge = nil
 	}()
 	return ch.Exec(input)
 }
 
 func (ch Challenge) Name() string {
+	if ch.Year == 0 {
+		return "Unknown Year"
+	}
 	if ch.Day == 0 {
 		return "Unknown Challenge"
 	}
-	return fmt.Sprintf("Day %d - Part %d", ch.Day, ch.Part)
+	return fmt.Sprintf("Year %d - Day %d - Part %d", ch.Year, ch.Day, ch.Part)
 }
 
-var currentChallenge *Challenge
+var CurrentChallenge *Challenge
 
-var allChallenges map[int]map[int]Challenge
+var allChallenges map[int]map[int]map[int]Challenge
 
-func readInputFile(inputFileName string) ([]string, error) {
+func readInputFile(year int, inputFileName string) ([]string, error) {
 	pwd, _ := os.Getwd()
-	fp := filepath.Join(pwd, "inputs", inputFileName)
+	fp := filepath.Join(pwd, "inputs", fmt.Sprintf("%d", year), inputFileName)
 	file, err := os.Open(fp)
 	if err != nil {
 		return nil, err

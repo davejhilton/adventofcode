@@ -1,15 +1,15 @@
-package challenges
+package challenges2020
 
 import (
 	"fmt"
 	"strconv"
 	"strings"
 
-	"github.com/davejhilton/adventofcode2020/log"
+	"github.com/davejhilton/adventofcode/challenges"
+	"github.com/davejhilton/adventofcode/log"
 )
 
 func day14_part1(input []string) (string, error) {
-
 	mem := make(map[uint64]uint64)
 	var mask string
 	for _, line := range input {
@@ -101,6 +101,6 @@ func day14_storeAllPermutations(addr uint64, mask string, value uint64, mem *map
 }
 
 func init() {
-	registerChallengeFunc(14, 1, "day14.txt", day14_part1)
-	registerChallengeFunc(14, 2, "day14.txt", day14_part2)
+	challenges.RegisterChallengeFunc(2020, 14, 1, "day14.txt", day14_part1)
+	challenges.RegisterChallengeFunc(2020, 14, 2, "day14.txt", day14_part2)
 }

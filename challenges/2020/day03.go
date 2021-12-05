@@ -1,7 +1,9 @@
-package challenges
+package challenges2020
 
 import (
 	"fmt"
+
+	"github.com/davejhilton/adventofcode/challenges"
 )
 
 func day3_part1(input []string) (string, error) {
@@ -10,13 +12,12 @@ func day3_part1(input []string) (string, error) {
 }
 
 func day3_part2(input []string) (string, error) {
-
 	slopes := [][]int{
-		[]int{1, 1},
-		[]int{3, 1},
-		[]int{5, 1},
-		[]int{7, 1},
-		[]int{1, 2},
+		{1, 1},
+		{3, 1},
+		{5, 1},
+		{7, 1},
+		{1, 2},
 	}
 	result := 1
 	for _, slope := range slopes {
@@ -45,6 +46,6 @@ func day3_traverseSlopes(input []string, r int, d int) int {
 }
 
 func init() {
-	registerChallengeFunc(3, 1, "day03.txt", day3_part1)
-	registerChallengeFunc(3, 2, "day03.txt", day3_part2)
+	challenges.RegisterChallengeFunc(2020, 3, 1, "day03.txt", day3_part1)
+	challenges.RegisterChallengeFunc(2020, 3, 2, "day03.txt", day3_part2)
 }

@@ -8,12 +8,15 @@ import (
 	"strings"
 	"time"
 
-	"github.com/davejhilton/adventofcode2020/challenges"
-	"github.com/davejhilton/adventofcode2020/log"
+	"github.com/davejhilton/adventofcode/challenges"
+	"github.com/davejhilton/adventofcode/log"
+
+	_ "github.com/davejhilton/adventofcode/challenges/2020"
+	_ "github.com/davejhilton/adventofcode/challenges/2021"
 )
 
 func main() {
-
+	var year int = 1
 	var day int = 1
 	var part int = 1
 	var verbose bool
@@ -28,13 +31,13 @@ func main() {
 	flag.IntVar(&exampleNum, "example", -1, "example-num: the number of the example input file to run")
 	flag.IntVar(&exampleNum, "e", -1, "")
 	flag.Parse()
-	parseArgs(&day, &part)
+	parseArgs(&year, &day, &part)
 
 	log.EnableDebugLogs(verbose)
 
-	challenge, err := challenges.GetChallenge(day, part, exampleNum)
+	challenge, err := challenges.GetChallenge(year, day, part, exampleNum)
 	if err != nil {
-		fmt.Fprintln(os.Stderr, fmt.Errorf("The specified day number does not exist!\nError: %w", err))
+		fmt.Fprintln(os.Stderr, fmt.Errorf("the specified year/day/challenge does not exist!\nError: %w", err))
 		os.Exit(1)
 	}
 
@@ -42,10 +45,10 @@ func main() {
 
 	solution, err := challenge.Run()
 
-	execTime := time.Now().Sub(startTime)
+	execTime := time.Since(startTime)
 
 	if err != nil {
-		fmt.Fprintln(os.Stderr, fmt.Errorf("Error running challenge!\nError: %w", err))
+		fmt.Fprintln(os.Stderr, fmt.Errorf("error running challenge!\nError: %w", err))
 		os.Exit(1)
 	}
 
@@ -57,19 +60,27 @@ func main() {
 	}
 }
 
-func parseArgs(day *int, part *int) {
+func parseArgs(year *int, day *int, part *int) {
 	if arg0 := flag.Arg(0); arg0 != "" {
-		d, err := strconv.Atoi(arg0)
+		y, err := strconv.Atoi(arg0)
 		if err != nil {
-			fmt.Fprintf(os.Stderr, "Error: First argument (day) must be a number, got: '%s'\n", arg0)
+			fmt.Fprintf(os.Stderr, "Error: First argument (year) must be a number, got: '%s'\n", arg0)
+			os.Exit(1)
+		}
+		*year = y
+	}
+	if arg1 := flag.Arg(1); arg1 != "" {
+		d, err := strconv.Atoi(arg1)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "Error: Second argument (day) must be a number, got: '%s'\n", arg1)
 			os.Exit(1)
 		}
 		*day = d
 	}
-	if arg1 := flag.Arg(1); arg1 != "" {
-		p, err := strconv.Atoi(arg1)
+	if arg2 := flag.Arg(2); arg2 != "" {
+		p, err := strconv.Atoi(arg2)
 		if err != nil {
-			fmt.Fprintf(os.Stderr, "Error: Second argument (part) must be a number, got: '%s'\n", arg1)
+			fmt.Fprintf(os.Stderr, "Error: Third argument (part) must be a number, got: '%s'\n", arg2)
 			os.Exit(1)
 		}
 		*part = p
@@ -78,12 +89,13 @@ func parseArgs(day *int, part *int) {
 
 func printUsage() {
 	prgParts := strings.Split(os.Args[0], "/")
-	fmt.Fprintf(os.Stderr, "Usage:\n  %s [OPTIONS] [day] [part]\n\n", prgParts[len(prgParts)-1])
+	fmt.Fprintf(os.Stderr, "Usage:\n  %s [OPTIONS] [year] [day] [part]\n\n", prgParts[len(prgParts)-1])
 	// flag.PrintDefaults()
 	fmt.Fprintln(os.Stderr, "[OPTIONS]")
 	fmt.Fprintln(os.Stderr, "    --example, -e      [int] the example input file number to use")
 	fmt.Fprintln(os.Stderr, "    --verbose, -v      enable debug logging")
 	//
+	fmt.Fprintln(os.Stderr, "[year]                 which year's challenge to run (integer)")
 	fmt.Fprintln(os.Stderr, "[day]                  which day's challenge to run (integer)")
 	fmt.Fprintln(os.Stderr, "[part]                 which of the specified [day]'s challenges to run (integer)")
 }

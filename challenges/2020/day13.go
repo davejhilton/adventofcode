@@ -1,11 +1,12 @@
-package challenges
+package challenges2020
 
 import (
 	"fmt"
 	"strconv"
 	"strings"
 
-	"github.com/davejhilton/adventofcode2020/log"
+	"github.com/davejhilton/adventofcode/challenges"
+	"github.com/davejhilton/adventofcode/log"
 )
 
 func day13_part1(input []string) (string, error) {
@@ -42,7 +43,7 @@ func day13_part1(input []string) (string, error) {
 func day13_part2(input []string) (string, error) {
 	_, buses := day13_parseInput(input, true)
 
-	overlaps := make([][]int, len(buses), len(buses))
+	overlaps := make([][]int, len(buses))
 
 	for i, b := range buses {
 		if overlaps[i] == nil {
@@ -133,6 +134,6 @@ func day13_parseInput(input []string, xsAsZeroes bool) (int, []int) {
 }
 
 func init() {
-	registerChallengeFunc(13, 1, "day13.txt", day13_part1)
-	registerChallengeFunc(13, 2, "day13.txt", day13_part2)
+	challenges.RegisterChallengeFunc(2020, 13, 1, "day13.txt", day13_part1)
+	challenges.RegisterChallengeFunc(2020, 13, 2, "day13.txt", day13_part2)
 }

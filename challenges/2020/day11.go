@@ -1,9 +1,10 @@
-package challenges
+package challenges2020
 
 import (
 	"fmt"
 
-	"github.com/davejhilton/adventofcode2020/log"
+	"github.com/davejhilton/adventofcode/challenges"
+	"github.com/davejhilton/adventofcode/log"
 )
 
 func day11_part1(input []string) (string, error) {
@@ -12,13 +13,13 @@ func day11_part1(input []string) (string, error) {
 	iterCount := 0
 	numOccupied := 0
 	for {
-		newSeating := make([][]rune, len(seating), len(seating))
+		newSeating := make([][]rune, len(seating))
 		hasChanges := false
 		numOccupied = 0
 		iterCount++
 		log.Debugf("ITERATION #%d:\n", iterCount)
 		for r, row := range seating {
-			newSeating[r] = make([]rune, len(row), len(row))
+			newSeating[r] = make([]rune, len(row))
 			log.Debug("    ")
 			for s, seat := range row {
 				log.Debugf("%s", string(seat))
@@ -102,13 +103,13 @@ func day11_part2(input []string) (string, error) {
 	iterCount := 0
 	numOccupied := 0
 	for {
-		nextSeating := make([][]rune, len(seating), len(seating))
+		nextSeating := make([][]rune, len(seating))
 		hasChanges := false
 		numOccupied = 0
 		iterCount++
 		log.Debugf("ITERATION #%d:\n", iterCount)
 		for i, row := range seating {
-			nextSeating[i] = make([]rune, len(row), len(row))
+			nextSeating[i] = make([]rune, len(row))
 			log.Debug("    ")
 			for j, seat := range row {
 				log.Debugf("%s", string(seat))
@@ -146,21 +147,20 @@ func day11_part2(input []string) (string, error) {
 }
 
 func day11_checkLineOfSightOccupied(seating [][]rune, r int, c int) int {
-
-	var TOPLEFT = 0
-	var TOP = 1
-	var TOPRIGHT = 2
-	var LEFT = 3
-	var RIGHT = 4
-	var BOTTOMLEFT = 5
-	var BOTTOM = 6
-	var BOTTOMRIGHT = 7
+	TOPLEFT := 0
+	TOP := 1
+	TOPRIGHT := 2
+	LEFT := 3
+	RIGHT := 4
+	BOTTOMLEFT := 5
+	BOTTOM := 6
+	BOTTOMRIGHT := 7
 
 	//  0 1 2
 	//  3 * 4
 	//  5 6 7
 
-	lineOfSight := make([]rune, 8, 8)
+	lineOfSight := make([]rune, 8)
 	for x := range lineOfSight {
 		lineOfSight[x] = '.'
 	}
@@ -241,6 +241,6 @@ func day11_parseSeating(input []string) [][]rune {
 }
 
 func init() {
-	registerChallengeFunc(11, 1, "day11.txt", day11_part1)
-	registerChallengeFunc(11, 2, "day11.txt", day11_part2)
+	challenges.RegisterChallengeFunc(2020, 11, 1, "day11.txt", day11_part1)
+	challenges.RegisterChallengeFunc(2020, 11, 2, "day11.txt", day11_part2)
 }

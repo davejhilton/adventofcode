@@ -1,11 +1,12 @@
-package challenges
+package challenges2020
 
 import (
 	"fmt"
 	"strconv"
 	"strings"
 
-	"github.com/davejhilton/adventofcode2020/log"
+	"github.com/davejhilton/adventofcode/challenges"
+	"github.com/davejhilton/adventofcode/log"
 )
 
 func day8_part1(input []string) (string, error) {
@@ -60,7 +61,6 @@ type day8_instruction struct {
 }
 
 func day8_tryProgram(program []day8_instruction, pc int, acc int, execHistory []int, altered bool, indent string) (int, bool) {
-
 	instrNum := 1
 
 	var success bool
@@ -125,6 +125,6 @@ func day8_parseProgram(input []string) []day8_instruction {
 }
 
 func init() {
-	registerChallengeFunc(8, 1, "day08.txt", day8_part1)
-	registerChallengeFunc(8, 2, "day08.txt", day8_part2)
+	challenges.RegisterChallengeFunc(2020, 8, 1, "day08.txt", day8_part1)
+	challenges.RegisterChallengeFunc(2020, 8, 2, "day08.txt", day8_part2)
 }

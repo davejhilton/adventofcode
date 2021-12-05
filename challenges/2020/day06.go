@@ -1,9 +1,10 @@
-package challenges
+package challenges2020
 
 import (
 	"fmt"
 
-	"github.com/davejhilton/adventofcode2020/log"
+	"github.com/davejhilton/adventofcode/challenges"
+	"github.com/davejhilton/adventofcode/log"
 )
 
 func day6_part1(input []string) (string, error) {
@@ -82,6 +83,6 @@ func day6_getGroups(input []string) [][]string {
 }
 
 func init() {
-	registerChallengeFunc(6, 1, "day06.txt", day6_part1)
-	registerChallengeFunc(6, 2, "day06.txt", day6_part2)
+	challenges.RegisterChallengeFunc(2020, 6, 1, "day06.txt", day6_part1)
+	challenges.RegisterChallengeFunc(2020, 6, 2, "day06.txt", day6_part2)
 }

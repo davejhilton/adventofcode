@@ -1,11 +1,12 @@
-package challenges
+package challenges2020
 
 import (
 	"fmt"
 	"strconv"
 	"strings"
 
-	"github.com/davejhilton/adventofcode2020/log"
+	"github.com/davejhilton/adventofcode/challenges"
+	"github.com/davejhilton/adventofcode/log"
 )
 
 func day15_part1(input []string) (string, error) {
@@ -43,6 +44,6 @@ func day15_iterate(numList string, target int) int {
 }
 
 func init() {
-	registerChallengeFunc(15, 1, "day15.txt", day15_part1)
-	registerChallengeFunc(15, 2, "day15.txt", day15_part2)
+	challenges.RegisterChallengeFunc(2020, 15, 1, "day15.txt", day15_part1)
+	challenges.RegisterChallengeFunc(2020, 15, 2, "day15.txt", day15_part2)
 }

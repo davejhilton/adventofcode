@@ -1,11 +1,12 @@
-package challenges
+package challenges2020
 
 import (
 	"fmt"
 	"strconv"
 	"strings"
 
-	"github.com/davejhilton/adventofcode2020/log"
+	"github.com/davejhilton/adventofcode/challenges"
+	"github.com/davejhilton/adventofcode/log"
 )
 
 func day23_part1(input []string) (string, error) {
@@ -18,7 +19,7 @@ func day23_part1(input []string) (string, error) {
 
 	log.Debugf("-- final --\nCups: %s\n", cups)
 
-	var cup = cups.Current
+	cup := cups.Current
 	for cup.Label != 1 {
 		cup = cup.Next
 	}
@@ -30,7 +31,7 @@ func day23_part1(input []string) (string, error) {
 		cup = cup.Next
 	}
 
-	return fmt.Sprintf("%s", b.String()), nil
+	return b.String(), nil
 }
 
 func day23_part2(input []string) (string, error) {
@@ -54,7 +55,7 @@ func day23_part2(input []string) (string, error) {
 	}
 	cup.Next = cups.Current
 
-	var debugWasEnabled = log.DebugEnabled()
+	debugWasEnabled := log.DebugEnabled()
 	for i := 1; i <= 10000000; i++ {
 		if (i < 5 || i%1000000 == 0 || i > 9999995) && debugWasEnabled {
 			log.EnableDebugLogs(true)
@@ -94,7 +95,6 @@ type day23_cups struct {
 }
 
 func (c *day23_cups) Move() {
-
 	log.Debugf("Cups: %s\n", c)
 	curVal := c.Current.Label
 
@@ -106,7 +106,7 @@ func (c *day23_cups) Move() {
 
 	// find the insertion target node
 	var targetNode *day23_cup
-	var targetVal = curVal
+	targetVal := curVal
 
 	for targetNode == nil {
 		targetVal -= 1
@@ -157,7 +157,7 @@ func day23_parse(input []string) day23_cups {
 	max := -1
 	var first *day23_cup
 	var prev *day23_cup
-	var cupMap = make(map[int]*day23_cup)
+	cupMap := make(map[int]*day23_cup)
 	for _, s := range input[0] {
 		n, _ := strconv.Atoi(string(s))
 		if n < min {
@@ -188,6 +188,6 @@ func day23_parse(input []string) day23_cups {
 }
 
 func init() {
-	registerChallengeFunc(23, 1, "day23.txt", day23_part1)
-	registerChallengeFunc(23, 2, "day23.txt", day23_part2)
+	challenges.RegisterChallengeFunc(2020, 23, 1, "day23.txt", day23_part1)
+	challenges.RegisterChallengeFunc(2020, 23, 2, "day23.txt", day23_part2)
 }

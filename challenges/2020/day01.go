@@ -1,10 +1,11 @@
-package challenges
+package challenges2020
 
 import (
 	"fmt"
 	"strconv"
 
-	"github.com/davejhilton/adventofcode2020/log"
+	"github.com/davejhilton/adventofcode/challenges"
+	"github.com/davejhilton/adventofcode/log"
 )
 
 func day1_part1(input []string) (string, error) {
@@ -21,7 +22,7 @@ func day1_part1(input []string) (string, error) {
 			}
 		}
 	}
-	return "", fmt.Errorf("No solution found\n")
+	return "", fmt.Errorf("no solution found%s", "\n")
 }
 
 func day1_part2(input []string) (string, error) {
@@ -43,7 +44,7 @@ func day1_part2(input []string) (string, error) {
 			}
 		}
 	}
-	return "", fmt.Errorf("No solution found")
+	return "", fmt.Errorf("no solution found")
 }
 
 func day1_formatInput(lines []string) ([]int, error) {
@@ -52,13 +53,13 @@ func day1_formatInput(lines []string) ([]int, error) {
 		if i, err := strconv.Atoi(v); err == nil {
 			nums = append(nums, i)
 		} else {
-			return nums, fmt.Errorf("Unable to parse input - '%s' is not a number!", v)
+			return nums, fmt.Errorf("unable to parse input - '%s' is not a number", v)
 		}
 	}
 	return nums, nil
 }
 
 func init() {
-	registerChallengeFunc(1, 1, "day01.txt", day1_part1)
-	registerChallengeFunc(1, 2, "day01.txt", day1_part2)
+	challenges.RegisterChallengeFunc(2020, 1, 1, "day01.txt", day1_part1)
+	challenges.RegisterChallengeFunc(2020, 1, 2, "day01.txt", day1_part2)
 }

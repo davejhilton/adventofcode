@@ -1,11 +1,12 @@
-package challenges
+package challenges2020
 
 import (
 	"fmt"
 	"sort"
 	"strings"
 
-	"github.com/davejhilton/adventofcode2020/log"
+	"github.com/davejhilton/adventofcode/challenges"
+	"github.com/davejhilton/adventofcode/log"
 )
 
 func day21_part1(input []string) (string, error) {
@@ -155,7 +156,7 @@ func day21_part2(input []string) (string, error) {
 			b.WriteString(",")
 		}
 	}
-	return fmt.Sprintf("%s", b.String()), nil
+	return b.String(), nil
 }
 
 func day21_parse(input []string) []day21_food {
@@ -196,6 +197,6 @@ func (f day21_food) HasIngredient(in string) bool {
 }
 
 func init() {
-	registerChallengeFunc(21, 1, "day21.txt", day21_part1)
-	registerChallengeFunc(21, 2, "day21.txt", day21_part2)
+	challenges.RegisterChallengeFunc(2020, 21, 1, "day21.txt", day21_part1)
+	challenges.RegisterChallengeFunc(2020, 21, 2, "day21.txt", day21_part2)
 }

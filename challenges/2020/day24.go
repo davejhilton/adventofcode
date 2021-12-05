@@ -1,9 +1,10 @@
-package challenges
+package challenges2020
 
 import (
 	"fmt"
 
-	"github.com/davejhilton/adventofcode2020/log"
+	"github.com/davejhilton/adventofcode/challenges"
+	"github.com/davejhilton/adventofcode/log"
 )
 
 func day24_part1(input []string) (string, error) {
@@ -68,7 +69,7 @@ func day24_part2(input []string) (string, error) {
 	}
 
 	var x, y, z int
-	var c = day24_coord{x, y, z}
+	c := day24_coord{x, y, z}
 	for day := 0; day < 100; day++ {
 		newBlackTiles := make(map[string]bool)
 
@@ -123,12 +124,12 @@ func day24_parse(input []string) []day24_path {
 
 func day24_countBlackNeighborTiles(c day24_coord, blackTiles map[string]bool) int {
 	deltas := []day24_coord{
-		day24_coord{1, -1, 0}, // e
-		day24_coord{0, -1, 1}, // se
-		day24_coord{-1, 0, 1}, // sw
-		day24_coord{-1, 1, 0}, // w
-		day24_coord{0, 1, -1}, // nw
-		day24_coord{1, 0, -1}, // ne
+		{1, -1, 0}, // e
+		{0, -1, 1}, // se
+		{-1, 0, 1}, // sw
+		{-1, 1, 0}, // w
+		{0, 1, -1}, // nw
+		{1, 0, -1}, // ne
 	}
 
 	count := 0
@@ -143,15 +144,16 @@ func day24_countBlackNeighborTiles(c day24_coord, blackTiles map[string]bool) in
 	}
 	return count
 }
+
 func day24_handleNeighborFlips(c day24_coord, cur map[string]bool, next *map[string]bool) {
 	tiles := []day24_coord{
 		c,
-		day24_coord{c[0] + 1, c[1] - 1, c[2] + 0}, // e
-		day24_coord{c[0] + 0, c[1] - 1, c[2] + 1}, // se
-		day24_coord{c[0] - 1, c[1] + 0, c[2] + 1}, // sw
-		day24_coord{c[0] - 1, c[1] + 1, c[2] + 0}, // w
-		day24_coord{c[0] + 0, c[1] + 1, c[2] - 1}, // nw
-		day24_coord{c[0] + 1, c[1] + 0, c[2] - 1}, // ne
+		{c[0] + 1, c[1] - 1, c[2] + 0}, // e
+		{c[0] + 0, c[1] - 1, c[2] + 1}, // se
+		{c[0] - 1, c[1] + 0, c[2] + 1}, // sw
+		{c[0] - 1, c[1] + 1, c[2] + 0}, // w
+		{c[0] + 0, c[1] + 1, c[2] - 1}, // nw
+		{c[0] + 1, c[1] + 0, c[2] - 1}, // ne
 	}
 	var n int
 	var key string
@@ -186,8 +188,10 @@ func (c day24_coord) String() string {
 
 type day24_path []day24_coord
 
-const day24_MAX_INT = int((^uint(0)) >> 1)
-const day24_MIN_INT = -1*day24_MAX_INT - 1
+const (
+	day24_MAX_INT = int((^uint(0)) >> 1)
+	day24_MIN_INT = -1*day24_MAX_INT - 1
+)
 
 /*
 
@@ -203,6 +207,6 @@ ne	->	 1,  0, -1
 */
 
 func init() {
-	registerChallengeFunc(24, 1, "day24.txt", day24_part1)
-	registerChallengeFunc(24, 2, "day24.txt", day24_part2)
+	challenges.RegisterChallengeFunc(2020, 24, 1, "day24.txt", day24_part1)
+	challenges.RegisterChallengeFunc(2020, 24, 2, "day24.txt", day24_part2)
 }

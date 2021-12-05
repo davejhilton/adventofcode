@@ -1,11 +1,12 @@
-package challenges
+package challenges2020
 
 import (
 	"fmt"
 	"strconv"
 	"strings"
 
-	"github.com/davejhilton/adventofcode2020/log"
+	"github.com/davejhilton/adventofcode/challenges"
+	"github.com/davejhilton/adventofcode/log"
 )
 
 func day16_part1(input []string) (string, error) {
@@ -98,7 +99,7 @@ func day16_part2(input []string) (string, error) {
 	}
 
 	// lastly, assign a ticket index to each field, based on an iterative process of elimination
-	final := make([]string, len(myTicketVals), len(myTicketVals))
+	final := make([]string, len(myTicketVals))
 	for len(fieldMap) > 0 {
 		for field, idxMap := range fieldMap {
 			if len(idxMap) == 1 {
@@ -159,7 +160,6 @@ func (r day16_rule) CheckValue(n int) bool {
 }
 
 func day16_parseInput(input []string) (map[string]day16_field, []int, [][]int) {
-
 	var i int
 	fields := make(map[string]day16_field)
 	log.Debugln("Ticket Fields and Their Rules:")
@@ -208,6 +208,6 @@ func day16_parseInput(input []string) (map[string]day16_field, []int, [][]int) {
 }
 
 func init() {
-	registerChallengeFunc(16, 1, "day16.txt", day16_part1)
-	registerChallengeFunc(16, 2, "day16.txt", day16_part2)
+	challenges.RegisterChallengeFunc(2020, 16, 1, "day16.txt", day16_part1)
+	challenges.RegisterChallengeFunc(2020, 16, 2, "day16.txt", day16_part2)
 }

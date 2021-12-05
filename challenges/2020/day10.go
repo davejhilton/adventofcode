@@ -1,11 +1,12 @@
-package challenges
+package challenges2020
 
 import (
 	"fmt"
 	"sort"
 	"strconv"
 
-	"github.com/davejhilton/adventofcode2020/log"
+	"github.com/davejhilton/adventofcode/challenges"
+	"github.com/davejhilton/adventofcode/log"
 )
 
 func day10_part1(input []string) (string, error) {
@@ -78,6 +79,6 @@ func day10_getSortedJoltages(input []string) []int {
 }
 
 func init() {
-	registerChallengeFunc(10, 1, "day10.txt", day10_part1)
-	registerChallengeFunc(10, 2, "day10.txt", day10_part2)
+	challenges.RegisterChallengeFunc(2020, 10, 1, "day10.txt", day10_part1)
+	challenges.RegisterChallengeFunc(2020, 10, 2, "day10.txt", day10_part2)
 }

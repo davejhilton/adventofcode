@@ -1,11 +1,12 @@
-package challenges
+package challenges2020
 
 import (
 	"fmt"
 	"strconv"
 	"strings"
 
-	"github.com/davejhilton/adventofcode2020/log"
+	"github.com/davejhilton/adventofcode/challenges"
+	"github.com/davejhilton/adventofcode/log"
 )
 
 func day9_part1(input []string) (string, error) {
@@ -15,7 +16,7 @@ func day9_part1(input []string) (string, error) {
 	var window int
 	var result int
 
-	if strings.Contains(currentChallenge.InputFileName, "example") {
+	if strings.Contains(challenges.CurrentChallenge.InputFileName, "example") {
 		window = 5
 	} else {
 		window = 25
@@ -50,7 +51,7 @@ func day9_part2(input []string) (string, error) {
 	nums := day9_parseInts(input)
 
 	var target int
-	if strings.Contains(currentChallenge.InputFileName, "example") {
+	if strings.Contains(challenges.CurrentChallenge.InputFileName, "example") {
 		target = 127
 	} else {
 		target = 2089807806
@@ -97,6 +98,6 @@ func day9_parseInts(input []string) []int {
 }
 
 func init() {
-	registerChallengeFunc(9, 1, "day09.txt", day9_part1)
-	registerChallengeFunc(9, 2, "day09.txt", day9_part2)
+	challenges.RegisterChallengeFunc(2020, 9, 1, "day09.txt", day9_part1)
+	challenges.RegisterChallengeFunc(2020, 9, 2, "day09.txt", day9_part2)
 }

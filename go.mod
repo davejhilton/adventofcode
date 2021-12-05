@@ -1,3 +1,3 @@
-module github.com/davejhilton/adventofcode2020
+module github.com/davejhilton/adventofcode
 
-go 1.15
+go 1.17
