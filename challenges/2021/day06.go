@@ -6,7 +6,6 @@ import (
 	"strings"
 
 	"github.com/davejhilton/adventofcode/challenges"
-	"github.com/davejhilton/adventofcode/log"
 )
 
 const day06_FISH_TIMER = 6
@@ -17,24 +16,20 @@ var day06_cache = make(map[int]int)
 
 func day06_part1(input []string) (string, error) {
 	fishList := day06_parse(input)
-	result := day06_simulateFishLife(fishList, 80)
-	log.Debugf("Result: %d\n", result)
+	result := len(fishList)
+	for _, n := range fishList {
+		result += day06_beFruitfulAndMultiply(n, 0, 80)
+	}
 	return fmt.Sprintf("%d", result), nil
 }
 
 func day06_part2(input []string) (string, error) {
 	fishList := day06_parse(input)
-	result := day06_simulateFishLife(fishList, 256)
-	log.Debugf("Result: %d\n", result)
-	return fmt.Sprintf("%d", result), nil
-}
-
-func day06_simulateFishLife(fishList []int, numDays int) int {
 	result := len(fishList)
 	for _, n := range fishList {
-		result += day06_beFruitfulAndMultiply(n, 0, numDays)
+		result += day06_beFruitfulAndMultiply(n, 0, 256)
 	}
-	return result
+	return fmt.Sprintf("%d", result), nil
 }
 
 func day06_beFruitfulAndMultiply(num int, startDay int, totalDays int) int {
