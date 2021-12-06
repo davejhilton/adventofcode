@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/davejhilton/adventofcode/challenges"
+	"github.com/davejhilton/adventofcode/codegen"
 	"github.com/davejhilton/adventofcode/log"
 
 	_ "github.com/davejhilton/adventofcode/challenges/2020"
@@ -16,6 +17,7 @@ import (
 )
 
 func main() {
+	var create bool
 	var year int = 1
 	var day int = 1
 	var part int = 1
@@ -31,13 +33,20 @@ func main() {
 	flag.IntVar(&exampleNum, "example", -1, "example-num: the number of the example input file to run")
 	flag.IntVar(&exampleNum, "e", -1, "")
 	flag.Parse()
-	parseArgs(&year, &day, &part)
+	parseArgs(&create, &year, &day, &part)
 
 	log.EnableDebugLogs(verbose)
 
-	// newChallengeFromTemplate(year, day)
-
-	// os.Exit(0)
+	if create {
+		err := codegen.GenerateChallengeTemplate(year, day)
+		if err != nil {
+			fmt.Printf("error generating code file: %s", err)
+			fmt.Println("Aborting.")
+			os.Exit(1)
+		}
+		fmt.Println("\nDone.")
+		os.Exit(0)
+	}
 
 	challenge, err := challenges.GetChallenge(year, day, part, exampleNum)
 	if err != nil {
@@ -64,30 +73,50 @@ func main() {
 	}
 }
 
-func parseArgs(year *int, day *int, part *int) {
+func parseArgs(create *bool, year *int, day *int, part *int) {
 	if arg0 := flag.Arg(0); arg0 != "" {
-		y, err := strconv.Atoi(arg0)
-		if err != nil {
-			fmt.Fprintf(os.Stderr, "Error: First argument (year) must be a number, got: '%s'\n", arg0)
-			os.Exit(1)
+		if arg0 == "create" {
+			*create = true
+		} else {
+			n, err := strconv.Atoi(arg0)
+			if err != nil {
+				fmt.Fprintf(os.Stderr, "Error: First argument (year) must be a number, got: '%s'\n", arg0)
+				os.Exit(1)
+			}
+			*year = n
 		}
-		*year = y
 	}
 	if arg1 := flag.Arg(1); arg1 != "" {
-		d, err := strconv.Atoi(arg1)
+		argName := "day"
+		if *create {
+			argName = "year"
+		}
+		n, err := strconv.Atoi(arg1)
 		if err != nil {
-			fmt.Fprintf(os.Stderr, "Error: Second argument (day) must be a number, got: '%s'\n", arg1)
+			fmt.Fprintf(os.Stderr, "Error: Second argument (%s) must be a number, got: '%s'\n", argName, arg1)
 			os.Exit(1)
 		}
-		*day = d
+		if *create {
+			*year = n
+		} else {
+			*day = n
+		}
 	}
 	if arg2 := flag.Arg(2); arg2 != "" {
-		p, err := strconv.Atoi(arg2)
+		argName := "part"
+		if *create {
+			argName = "day"
+		}
+		n, err := strconv.Atoi(arg2)
 		if err != nil {
-			fmt.Fprintf(os.Stderr, "Error: Third argument (part) must be a number, got: '%s'\n", arg2)
+			fmt.Fprintf(os.Stderr, "Error: Third argument (%s) must be a number, got: '%s'\n", argName, arg2)
 			os.Exit(1)
 		}
-		*part = p
+		if *create {
+			*day = n
+		} else {
+			*part = n
+		}
 	}
 }
 
