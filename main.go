@@ -35,6 +35,10 @@ func main() {
 
 	log.EnableDebugLogs(verbose)
 
+	// newChallengeFromTemplate(year, day)
+
+	// os.Exit(0)
+
 	challenge, err := challenges.GetChallenge(year, day, part, exampleNum)
 	if err != nil {
 		fmt.Fprintln(os.Stderr, fmt.Errorf("the specified year/day/challenge does not exist!\nError: %w", err))
