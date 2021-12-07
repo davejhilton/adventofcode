@@ -6,6 +6,7 @@ import (
 
 	"github.com/davejhilton/adventofcode/challenges"
 	"github.com/davejhilton/adventofcode/log"
+	"github.com/davejhilton/adventofcode/util"
 )
 
 func day{{.Day}}_part1(input []string) (string, error) {
@@ -28,8 +29,7 @@ func day{{.Day}}_part2(input []string) (string, error) {
 func day{{.Day}}_parse(input []string) []int {
 	nums := make([]int, 0, len(input))
 	for _, s := range input {
-		n, _ := strconv.Atoi(s)
-		nums = append(nums, n)
+		nums = append(nums, util.Atoi(s))
 	}
 	return nums
 }
