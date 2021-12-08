@@ -2,12 +2,12 @@ package challenges2021
 
 import (
 	"fmt"
-	"math"
 	"strconv"
 	"strings"
 
 	"github.com/davejhilton/adventofcode/challenges"
 	"github.com/davejhilton/adventofcode/log"
+	"github.com/davejhilton/adventofcode/util"
 )
 
 func day05_part1(input []string) (string, error) {
@@ -16,7 +16,7 @@ func day05_part1(input []string) (string, error) {
 	log.Debugf("Grid size (w x h): %d x %d\n", w, h)
 
 	for _, l := range lines {
-		DrawLine(g, l, false)
+		day05_drawLine(g, l, false)
 	}
 	log.Debugf("%s\n\n", *g)
 	result := g.CountOverlaps()
@@ -31,7 +31,7 @@ func day05_part2(input []string) (string, error) {
 	log.Debugf("Grid size (w x h): %d x %d\n", w, h)
 
 	for _, l := range lines {
-		DrawLine(g, l, true)
+		day05_drawLine(g, l, true)
 	}
 	log.Debugf("%s\n\n", *g)
 	result := g.CountOverlaps()
@@ -61,31 +61,31 @@ func day05_parse(input []string) ([]*line, int, int) {
 			x2: x2,
 			y2: y2,
 		})
-		maxX = max(maxX, x1, x2)
-		maxY = max(maxY, y1, y2)
+		maxX = util.Max(maxX, x1, x2)
+		maxY = util.Max(maxY, y1, y2)
 	}
 	return lines, maxX + 1, maxY + 1
 }
 
-func DrawLine(g *grid, l *line, includeDiagonal bool) {
+func day05_drawLine(g *grid, l *line, includeDiagonal bool) {
 	if l.y2 == l.y1 {
 		y := l.y1
-		start := min(l.x1, l.x2)
-		end := max(l.x1, l.x2)
+		start := util.Min(l.x1, l.x2)
+		end := util.Max(l.x1, l.x2)
 		for x := start; x <= end; x++ {
 			(*g)[y][x] += 1
 		}
 	} else if l.x2 == l.x1 {
 		x := l.x1
-		start := min(l.y1, l.y2)
-		end := max(l.y1, l.y2)
+		start := util.Min(l.y1, l.y2)
+		end := util.Max(l.y1, l.y2)
 		for y := start; y <= end; y++ {
 			(*g)[y][x] += 1
 		}
 	} else if includeDiagonal {
 		// log.Debugf("Drawing diagonal: %s\n", *l)
-		xStart := min(l.x1, l.x2)
-		xEnd := max(l.x1, l.x2)
+		xStart := util.Min(l.x1, l.x2)
+		xEnd := util.Max(l.x1, l.x2)
 		yStart := l.y1
 		yAsc := l.y2 > l.y1
 		if xStart == l.x2 {
@@ -154,26 +154,6 @@ func (g grid) String() string {
 		}
 	}
 	return sb.String()
-}
-
-func max(nums ...int) int {
-	max := math.MinInt
-	for _, n := range nums {
-		if n > max {
-			max = n
-		}
-	}
-	return max
-}
-
-func min(nums ...int) int {
-	min := math.MaxInt
-	for _, n := range nums {
-		if n < min {
-			min = n
-		}
-	}
-	return min
 }
 
 func init() {

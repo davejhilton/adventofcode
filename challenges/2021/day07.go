@@ -52,6 +52,6 @@ func day07_parse(input []string) ([]int, int) {
 }
 
 func init() {
-	challenges.RegisterChallengeFunc(2021, 07, 1, "day07.txt", day07_part1)
-	challenges.RegisterChallengeFunc(2021, 07, 2, "day07.txt", day07_part2)
+	challenges.RegisterChallengeFunc(2021, 7, 1, "day07.txt", day07_part1)
+	challenges.RegisterChallengeFunc(2021, 7, 2, "day07.txt", day07_part2)
 }
