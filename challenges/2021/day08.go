@@ -31,40 +31,31 @@ func day08_part2(input []string) (string, error) {
 
 	for _, io := range inputOutputPairs {
 
-		one := io.InputMap[2][0]      // TR, BR
-		four := io.InputMap[4][0]     // TL, TR, M, BR
-		seven := io.InputMap[3][0]    // T, TR, BR - the segment that's unique from 'one' is T
-		eight := io.InputMap[7][0]    // all segments
-		sixNineZero := io.InputMap[6] // all segments
+		one := sortString(io.InputMap[2][0])   // TR, BR
+		four := sortString(io.InputMap[4][0])  // TL, TR, M, BR
+		seven := sortString(io.InputMap[3][0]) // T, TR, BR
+		eight := sortString(io.InputMap[7][0]) // all segments
+		six_nine_zero := io.InputMap[6]
 
-		T := withoutRunes(seven, []rune(one))
-		tl_m := withoutRunes(four, []rune(one))
-		tr_bl_m := dedup(strings.Join([]string{
-			xor(sixNineZero[0], sixNineZero[1]),
-			xor(sixNineZero[1], sixNineZero[2]),
+		T := symmetricDiff(seven, one)
+		TL_M := symmetricDiff(four, one)
+		TR_M_BL := unique(strings.Join([]string{
+			symmetricDiff(six_nine_zero[0], six_nine_zero[1]),
+			symmetricDiff(six_nine_zero[1], six_nine_zero[2]),
 		}, ""))
-		TR := and(tr_bl_m, one)
-		BR := xor(seven, strings.Join([]string{T, TR}, ""))
-		M := and(tl_m, tr_bl_m)
-		TL := xor(tl_m, M)
-		BL := xor(tr_bl_m, strings.Join([]string{M, TR}, ""))
-		B := xor(eight, strings.Join([]string{T, TL, TR, M, BL, BR}, ""))
+		TR := intersection(TR_M_BL, one)
+		BR := symmetricDiff(seven, strings.Join([]string{T, TR}, ""))
+		M := intersection(TL_M, TR_M_BL)
+		TL := symmetricDiff(TL_M, M)
+		BL := symmetricDiff(TR_M_BL, strings.Join([]string{M, TR}, ""))
+		B := symmetricDiff(eight, strings.Join([]string{T, TL, TR, M, BL, BR}, ""))
 
-		segMap := *NewSegMap()
-		segMap["T"] = T
-		segMap["TL"] = TL
-		segMap["TR"] = TR
-		segMap["M"] = M
-		segMap["BL"] = BL
-		segMap["BR"] = BR
-		segMap["B"] = B
-
-		two := sortStr(strings.Join([]string{T, TR, M, BL, B}, ""))
-		three := sortStr(strings.Join([]string{T, TR, M, BR, B}, ""))
-		five := sortStr(strings.Join([]string{T, TL, M, BR, B}, ""))
-		six := sortStr(strings.Join([]string{T, TL, M, BL, BR, B}, ""))
-		nine := sortStr(strings.Join([]string{T, TL, TR, M, BR, B}, ""))
-		zero := sortStr(strings.Join([]string{T, TL, TR, BL, BR, B}, ""))
+		two := sortString(strings.Join([]string{T, TR, M, BL, B}, ""))
+		three := sortString(strings.Join([]string{T, TR, M, BR, B}, ""))
+		five := sortString(strings.Join([]string{T, TL, M, BR, B}, ""))
+		six := sortString(strings.Join([]string{T, TL, M, BL, BR, B}, ""))
+		nine := sortString(strings.Join([]string{T, TL, TR, M, BR, B}, ""))
+		zero := sortString(strings.Join([]string{T, TL, TR, BL, BR, B}, ""))
 
 		numMap := map[string]int{
 			zero:  0,
@@ -78,32 +69,22 @@ func day08_part2(input []string) (string, error) {
 			eight: 8,
 			nine:  9,
 		}
-		nOutputs := 4
-		num := 0
-		displays := make([]digitDisplay, 0)
+		allSegments := segmentMap{"T": T, "TL": TL, "TR": TR, "M": M, "BL": BL, "BR": BR, "B": B}
+		displays := make([]segmentMap, 0)
+		numericOutput := 0
 		for i, o := range io.Outputs {
-			n := numMap[o]
-			displays = append(displays, NewDigitDisplay(o, segMap))
-			num += n * int(math.Pow10(nOutputs-i-1))
+			n := numMap[sortString(o)]
+			displays = append(displays, NewDigitDisplay(o, allSegments))
+			numericOutput += n * int(math.Pow10(len(io.Outputs)-i-1))
 		}
 		log.Debugf("%s\n%s\n\n", strings.Join(io.Outputs, " "), multiDigitDisplayString(displays...))
-		result += num
+		result += numericOutput
 	}
 
-	log.Debugf("Result: %d\n", result)
 	return fmt.Sprintf("%d", result), nil
 }
 
-func withoutRunes(str string, runes []rune) string {
-	for _, r := range runes {
-		if strings.ContainsRune(str, r) {
-			str = strings.Replace(str, string(r), "", 1)
-		}
-	}
-	return str
-}
-
-func and(str1, str2 string) string {
+func intersection(str1, str2 string) string {
 	var sb strings.Builder
 	for _, r := range str1 {
 		if strings.ContainsRune(str2, r) {
@@ -113,26 +94,18 @@ func and(str1, str2 string) string {
 	return sb.String()
 }
 
-func xor(strs ...string) string {
-	cp := strs[0:]
-	for i := 0; i < len(strs)-1; i += 1 {
-		str := strs[i]
-		for _, r := range str {
-			for j := 0; j < len(strs); j += 1 {
-				if i != j {
-					if strings.ContainsRune(strs[j], r) {
-						for k := range cp {
-							cp[k] = strings.Replace(cp[k], string(r), "", 1)
-						}
-					}
-				}
-			}
+func symmetricDiff(str1 string, str2 string) string {
+	s1, s2 := str1, str2
+	for _, r := range str2 {
+		if strings.ContainsRune(str1, r) {
+			s1 = strings.Replace(s1, string(r), "", 1)
+			s2 = strings.Replace(s2, string(r), "", 1)
 		}
 	}
-	return strings.Join(cp, "")
+	return fmt.Sprintf("%s%s", s1, s2)
 }
 
-func dedup(str string) string {
+func unique(str string) string {
 	u := make(map[rune]bool)
 	for _, r := range str {
 		u[r] = true
@@ -144,14 +117,14 @@ func dedup(str string) string {
 	return string(r)
 }
 
-func sortStr(str string) string {
+func sortString(str string) string {
 	split := strings.Split(str, "")
 	sort.Strings(split)
 	return strings.Join(split, "")
 }
 
-func day08_parse(input []string) []*ioPair {
-	pairs := make([]*ioPair, 0, len(input))
+func day08_parse(input []string) []ioPair {
+	pairs := make([]ioPair, 0, len(input))
 	for _, s := range input {
 		halves := strings.SplitN(s, " | ", 2)
 		in := strings.Split(halves[0], " ")
@@ -163,20 +136,18 @@ func day08_parse(input []string) []*ioPair {
 			if _, ok := inMap[l]; !ok {
 				inMap[l] = make([]string, 0)
 			}
-			sorted := sortStr(v)
-			inMap[l] = append(inMap[l], sorted)
-			in[i] = sorted
+			inMap[l] = append(inMap[l], v)
+			in[i] = v
 		}
 		for i, v := range out {
 			l := len(v)
 			if _, ok := outMap[l]; !ok {
 				outMap[l] = make([]string, 0)
 			}
-			sorted := sortStr(v)
-			outMap[l] = append(outMap[l], sorted)
-			out[i] = sorted
+			outMap[l] = append(outMap[l], v)
+			out[i] = v
 		}
-		pairs = append(pairs, &ioPair{
+		pairs = append(pairs, ioPair{
 			Inputs:    in,
 			InputMap:  inMap,
 			Outputs:   out,
@@ -197,35 +168,33 @@ func (io ioPair) String() string {
 	return fmt.Sprintf("%s | %s", strings.Join(io.Inputs, " "), strings.Join(io.Outputs, " "))
 }
 
-type segMap map[string]string
+type segmentMap map[string]string
 
-type digitDisplay struct {
-	Segments string
-	Mappings segMap
-	display  segMap
+func EmptySegmentMap() segmentMap {
+	return segmentMap{
+		"T":  ".",
+		"TL": ".",
+		"TR": ".",
+		"M":  ".",
+		"BL": ".",
+		"BR": ".",
+		"B":  ".",
+	}
 }
 
-func NewDigitDisplay(segments string, mappings segMap) digitDisplay {
-	display := *NewSegMap()
+func NewDigitDisplay(segments string, mappings segmentMap) segmentMap {
+	display := EmptySegmentMap()
 	for k, s := range mappings {
 		if strings.Contains(segments, s) {
 			display[k] = s
 		}
 	}
-	return digitDisplay{
-		Segments: segments,
-		Mappings: mappings,
-		display:  display,
-	}
+	return display
 }
 
-func (dd digitDisplay) String() string {
-	return dd.display.String()
-}
-
-func (d segMap) String() string {
+func (sm segmentMap) String() string {
 	var sb strings.Builder
-	T, TL, TR, M, BL, BR, B := d["T"], d["TL"], d["TR"], d["M"], d["BL"], d["BR"], d["B"]
+	T, TL, TR, M, BL, BR, B := sm["T"], sm["TL"], sm["TR"], sm["M"], sm["BL"], sm["BR"], sm["B"]
 	segList := []*string{&T, &TL, &TR, &M, &BL, &BR, &B}
 	for _, v := range segList {
 		if *v != "." {
@@ -244,36 +213,24 @@ func (d segMap) String() string {
 	return sb.String()
 }
 
-func multiDigitDisplayString(digits ...digitDisplay) string {
+func multiDigitDisplayString(digits ...segmentMap) string {
 	var sb strings.Builder
 	sep := "  "
-	digitLines := make([][]string, 0, len(digits))
+	displayRows := make([][]string, 0, len(digits))
 	for _, d := range digits {
-		digitLines = append(digitLines, strings.Split(d.String(), "\n"))
+		displayRows = append(displayRows, strings.Split(d.String(), "\n"))
 	}
-	for rowNum := range digitLines[0] {
+	for rowNum := range displayRows[0] {
 		if rowNum != 0 {
 			sb.WriteString("\n")
 		}
 		rowParts := make([]string, 0)
-		for _, digit := range digitLines {
+		for _, digit := range displayRows {
 			rowParts = append(rowParts, digit[rowNum])
 		}
 		sb.WriteString(strings.Join(rowParts, sep))
 	}
 	return sb.String()
-}
-
-func NewSegMap() *segMap {
-	return &segMap{
-		"T":  ".",
-		"TL": ".",
-		"TR": ".",
-		"M":  ".",
-		"BL": ".",
-		"BR": ".",
-		"B":  ".",
-	}
 }
 
 func init() {
