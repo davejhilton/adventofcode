@@ -31,8 +31,9 @@ func GenerateChallengeTemplate(year int, day int) error {
 	}
 
 	tpl.ExecuteTemplate(writer, "challenge.tpl", &map[string]string{
-		"Year": fmt.Sprintf("%d", year),
-		"Day":  fmt.Sprintf("%.2d", day),
+		"Year":       fmt.Sprintf("%d", year),
+		"Day":        fmt.Sprintf("%d", day),
+		"Day_padded": fmt.Sprintf("%.2d", day),
 	})
 
 	fmt.Printf("Created challenge file:      %s\n", goFile)
