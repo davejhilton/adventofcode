@@ -12,8 +12,7 @@ import (
 	"github.com/davejhilton/adventofcode/codegen"
 	"github.com/davejhilton/adventofcode/log"
 
-	_ "github.com/davejhilton/adventofcode/challenges/2020"
-	_ "github.com/davejhilton/adventofcode/challenges/2021"
+	_ "github.com/davejhilton/adventofcode/challenges/loader"
 )
 
 func main() {
@@ -40,7 +39,7 @@ func main() {
 	if create {
 		err := codegen.GenerateChallengeTemplate(year, day)
 		if err != nil {
-			fmt.Printf("error generating code file: %s", err)
+			fmt.Printf("error generating code file: %s\n", err)
 			fmt.Println("Aborting.")
 			os.Exit(1)
 		}
