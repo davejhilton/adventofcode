@@ -39,11 +39,11 @@ func main() {
 	if create {
 		err := codegen.GenerateChallengeTemplate(year, day)
 		if err != nil {
-			fmt.Printf("error generating code file: %s\n", err)
+			fmt.Printf("Error generating code file: %s\n", err)
 			fmt.Println("Aborting.")
 			os.Exit(1)
 		}
-		fmt.Println("\nDone.")
+		fmt.Println("Done.")
 		os.Exit(0)
 	}
 

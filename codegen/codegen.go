@@ -8,28 +8,67 @@ import (
 	"regexp"
 	"strings"
 	"text/template"
+
+	"github.com/davejhilton/adventofcode/log"
 )
+
+const msgWidth = -35
 
 var insertPattern = regexp.MustCompile(`.*CODEGEN: INSERT HERE*`)
 
 func GenerateChallengeTemplate(year int, day int) error {
 
-	dirName := fmt.Sprintf("challenges/%d/day%.2d", year, day)
-	goFile := fmt.Sprintf("%s/day%.2d.go", dirName, day)
+	dirPath := fmt.Sprintf("./challenges/%d/day%.2d", year, day)
+	if err := createDirectory(dirPath); err != nil {
+		return err
+	}
 
-	if _, err := os.Stat(goFile); err == nil {
+	goFilePath := fmt.Sprintf("%s/day%.2d.go", dirPath, day)
+	if err := generateCodeFile(goFilePath, year, day); err != nil {
+		return err
+	}
+
+	loaderFilePath := "./challenges/loader/loader.go"
+	if err := addPackageImport(loaderFilePath, year, day); err != nil {
+		return err
+	}
+
+	inputFilePath := fmt.Sprintf("%s/day%.2d.txt", dirPath, day)
+	if err := generateInputFile(inputFilePath); err != nil {
+		return err
+	}
+
+	exampleFilePath := fmt.Sprintf("%s/day%.2d_example1.txt", dirPath, day)
+	if err := generateInputFile(exampleFilePath); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func createDirectory(dirPath string) error {
+	err := os.Mkdir(dirPath, 0755)
+	if errors.Is(err, os.ErrExist) {
+		fmt.Printf("%s%s\n", log.Colorize("Challenge dir already exists:", log.Yellow, msgWidth), dirPath)
+		return nil
+	} else if err != nil {
+		return err
+	}
+	fmt.Printf("%s%s\n", log.Colorize("Created challenge dir:", log.Green, msgWidth), dirPath)
+	return nil
+}
+
+func generateCodeFile(filePath string, year int, day int) error {
+	if _, err := os.Stat(filePath); err == nil {
 		// file already exists - don't overwrite it!
-		return fmt.Errorf("file '%s' already exists", goFile)
+		fmt.Printf("%s%s\n", log.Colorize("Challenge file already exists:", log.Yellow, msgWidth), filePath)
+		return nil
 	} else if !errors.Is(err, os.ErrNotExist) {
 		// we expected os.ErrNotExist... but got some other error
 		return err
 	}
 
-	if err := os.Mkdir(dirName, 0755); err != nil {
-		return err
-	}
-
-	writer, err := os.Create(goFile)
+	writer, err := os.Create(filePath)
 	if err != nil {
 		return err
 	}
@@ -37,7 +76,7 @@ func GenerateChallengeTemplate(year int, day int) error {
 
 	tpl, err := template.New("NewChallenge").ParseFiles("codegen/challenge-template.tpl")
 	if err != nil {
-		fmt.Printf("ERROR rendering template: %s\n", err)
+		fmt.Printf("%s %s\n", log.Colorize("ERROR rendering template:", log.Red, 0), err)
 		return err
 	}
 
@@ -46,26 +85,33 @@ func GenerateChallengeTemplate(year int, day int) error {
 		"Day":  day,
 	})
 
-	fmt.Printf("Created challenge file:      %s\n", goFile)
+	fmt.Printf("%s%s\n", log.Colorize("Created challenge file:", log.Green, msgWidth), filePath)
+	return nil
+}
 
-	inputFile := fmt.Sprintf("%s/day%.2d.txt", dirName, day)
-	f2, err := os.Create(inputFile)
+func generateInputFile(filePath string) error {
+	if _, err := os.Stat(filePath); err != nil {
+		if !errors.Is(err, os.ErrNotExist) {
+			// we expected os.ErrNotExist... but got some other error
+			return err
+		}
+	} else {
+		// file already exists - don't overwrite it!
+		fmt.Printf("%s%s\n", log.Colorize("Input file already exists:", log.Yellow, msgWidth), filePath)
+		return nil
+	}
+
+	file, err := os.Create(filePath)
 	if err != nil {
 		return err
 	}
-	f2.Close()
-	fmt.Printf("Created empty input file:    %s\n", inputFile)
+	defer file.Close()
+	fmt.Printf("%s%s\n", log.Colorize("Created empty input file:", log.Green, msgWidth), filePath)
+	return nil
+}
 
-	exampleInputFile := fmt.Sprintf("%s/day%.2d_example1.txt", dirName, day)
-	f3, err := os.Create(exampleInputFile)
-	if err != nil {
-		return err
-	}
-	f3.Close()
-	fmt.Printf("Created empty example file:  %s\n", exampleInputFile)
-
-	loaderPath := "challenges/loader/loader.go"
-	loaderFile, err := os.OpenFile(loaderPath, os.O_RDWR, 0644)
+func addPackageImport(loaderFilePath string, year int, day int) error {
+	loaderFile, err := os.OpenFile(loaderFilePath, os.O_RDWR, 0644)
 	if err != nil {
 		return err
 	}
@@ -75,16 +121,16 @@ func GenerateChallengeTemplate(year int, day int) error {
 
 	pkgPath := fmt.Sprintf("github.com/davejhilton/adventofcode/challenges/%d/day%.2d", year, day)
 	importStmt := fmt.Sprintf(`	_ "%s"`, pkgPath)
-	importAlreadyExists := false
 
 	scanner := bufio.NewScanner(loaderFile)
 	for scanner.Scan() {
 		text := scanner.Text()
 		if text == importStmt {
-			importAlreadyExists = true
+			fmt.Printf("%s%s\n", log.Colorize("Package import already exists:", log.Yellow, msgWidth), loaderFilePath)
+			return nil
 		}
-		if insertPattern.MatchString(text) && !importAlreadyExists {
-			fmt.Printf("Modifying loader.go to add import for '%s'.\n", pkgPath)
+		if insertPattern.MatchString(text) {
+			fmt.Printf("%s%s\n", log.Colorize("Added package import statement:", log.Green, msgWidth), loaderFilePath)
 			lines = append(lines, importStmt)
 		}
 		lines = append(lines, text)
@@ -92,10 +138,6 @@ func GenerateChallengeTemplate(year int, day int) error {
 
 	if err := scanner.Err(); err != nil {
 		return err
-	}
-
-	if importAlreadyExists {
-		return nil
 	}
 
 	loaderFile.Truncate(0)
