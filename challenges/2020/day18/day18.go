@@ -10,7 +10,7 @@ import (
 )
 
 func part1(input []string) (string, error) {
-	expressions := parse(input)
+	expressions := parseInput(input)
 	sum := 0
 	log.Debugln("---------------")
 	for _, e := range expressions {
@@ -22,7 +22,7 @@ func part1(input []string) (string, error) {
 }
 
 func part2(input []string) (string, error) {
-	expressions := parse(input)
+	expressions := parseInput(input)
 	log.Debugln("*****************")
 	sum := 0
 	for _, e := range expressions {
@@ -33,7 +33,7 @@ func part2(input []string) (string, error) {
 	return fmt.Sprintf("%d", sum), nil
 }
 
-func parse(input []string) []token {
+func parseInput(input []string) []token {
 	expressions := make([]token, 0, len(input))
 	for _, line := range input {
 		exprStack := make([]token, 0)

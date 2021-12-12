@@ -10,7 +10,7 @@ import (
 )
 
 func part1(input []string) (string, error) {
-	foods := parse(input)
+	foods := parseInput(input)
 
 	log.Debugln("FOODS: ")
 	for _, f := range foods {
@@ -87,7 +87,7 @@ func part1(input []string) (string, error) {
 }
 
 func part2(input []string) (string, error) {
-	foods := parse(input)
+	foods := parseInput(input)
 
 	log.Debugln("FOODS: ")
 	for _, f := range foods {
@@ -159,7 +159,7 @@ func part2(input []string) (string, error) {
 	return b.String(), nil
 }
 
-func parse(input []string) []food {
+func parseInput(input []string) []food {
 	foods := make([]food, 0, len(input))
 
 	for _, line := range input {

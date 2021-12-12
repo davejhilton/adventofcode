@@ -9,23 +9,21 @@ import (
 )
 
 func part1(input []string) (string, error) {
-	parsed := parse(input)
+	parsed := parseInput(input)
 	log.Debugf("Parsed Input:\n%v\n", parsed)
-	var result int
 
-	log.Debugf("Result: %d\n", result)
+	var result int
 	return fmt.Sprintf("%d", result), nil
 }
 
 func part2(input []string) (string, error) {
-	// parsed := parse(input)
-	var result int
+	// parsed := parseInput(input)
 
-	log.Debugf("Result: %d\n", result)
+	var result int
 	return fmt.Sprintf("%d", result), nil
 }
 
-func parse(input []string) []int {
+func parseInput(input []string) []int {
 	nums := make([]int, 0, len(input))
 	for _, s := range input {
 		nums = append(nums, util.Atoi(s))

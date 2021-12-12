@@ -10,7 +10,7 @@ import (
 )
 
 func part1(input []string) (string, error) {
-	grid := parse(input)
+	grid := parseInput(input)
 	count := 0
 	for i := 0; i < 100; i++ {
 		count += runStep(&grid)
@@ -19,7 +19,7 @@ func part1(input []string) (string, error) {
 }
 
 func part2(input []string) (string, error) {
-	grid := parse(input)
+	grid := parseInput(input)
 	stepNum := 1
 	for {
 		count := runStep(&grid)
@@ -99,7 +99,7 @@ func runStep(g *[][]int) int {
 	return count
 }
 
-func parse(input []string) [][]int {
+func parseInput(input []string) [][]int {
 	nums := make([][]int, 0, len(input))
 	for _, s := range input {
 		rowStrs := strings.Split(s, "")

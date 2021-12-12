@@ -8,7 +8,7 @@ import (
 )
 
 func part1(input []string) (string, error) {
-	binLists := parse(input)
+	binLists := parseInput(input)
 
 	γ, ε := 0, 0
 	count := len(binLists)
@@ -35,7 +35,7 @@ func part1(input []string) (string, error) {
 }
 
 func part2(input []string) (string, error) {
-	binLists := parse(input)
+	binLists := parseInput(input)
 
 	o2gen, co2scrub := 0, 0
 	bitCount := len(binLists[0])
@@ -140,7 +140,7 @@ func doubleSliceToString(bl [][]int) string {
 	return str
 }
 
-func parse(input []string) [][]int {
+func parseInput(input []string) [][]int {
 	digitLists := make([][]int, 0, len(input))
 	for _, s := range input {
 		dl := make([]int, 0)

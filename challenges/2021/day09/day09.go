@@ -11,7 +11,7 @@ import (
 )
 
 func part1(input []string) (string, error) {
-	grid := parse(input)
+	grid := parseInput(input)
 	sum := 0
 	for _, c := range getLowPoints(grid) {
 		sum += c.V + 1
@@ -68,7 +68,7 @@ func coordStr(r, c int) string {
 }
 
 func part2(input []string) (string, error) {
-	grid := parse(input)
+	grid := parseInput(input)
 	lowPoints := getLowPoints(grid)
 
 	sizes := make([]int, 0)
@@ -121,7 +121,7 @@ func checkBoundaries(r int, c int, grid [][]int, basin *[]string) {
 	}
 }
 
-func parse(input []string) [][]int {
+func parseInput(input []string) [][]int {
 	grid := make([][]int, 0, len(input))
 	for _, s := range input {
 		strDigits := strings.Split(s, "")

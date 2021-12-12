@@ -11,7 +11,7 @@ import (
 )
 
 func part1(input []string) (string, error) {
-	inputOutputPairs := parse(input)
+	inputOutputPairs := parseInput(input)
 	result := 0
 	for _, io := range inputOutputPairs {
 		uniqueLengths := []int{2, 3, 4, 7}
@@ -26,7 +26,7 @@ func part1(input []string) (string, error) {
 }
 
 func part2(input []string) (string, error) {
-	inputOutputPairs := parse(input)
+	inputOutputPairs := parseInput(input)
 	result := 0
 
 	for _, io := range inputOutputPairs {
@@ -123,7 +123,7 @@ func sortString(str string) string {
 	return strings.Join(split, "")
 }
 
-func parse(input []string) []ioPair {
+func parseInput(input []string) []ioPair {
 	pairs := make([]ioPair, 0, len(input))
 	for _, s := range input {
 		halves := strings.SplitN(s, " | ", 2)

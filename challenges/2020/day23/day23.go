@@ -10,7 +10,7 @@ import (
 )
 
 func part1(input []string) (string, error) {
-	cups := parse(input)
+	cups := parseInput(input)
 
 	for i := 1; i <= 100; i++ {
 		log.Debugf("-- move %d --\n", i)
@@ -35,7 +35,7 @@ func part1(input []string) (string, error) {
 }
 
 func part2(input []string) (string, error) {
-	cups := parse(input)
+	cups := parseInput(input)
 
 	// find the "last" node
 	c := cups.Current
@@ -152,7 +152,7 @@ func (c cups) String() string {
 	return strings.TrimSpace(b.String())
 }
 
-func parse(input []string) cups {
+func parseInput(input []string) cups {
 	min := 10
 	max := -1
 	var first *cup

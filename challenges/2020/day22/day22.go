@@ -9,7 +9,7 @@ import (
 )
 
 func part1(input []string) (string, error) {
-	deck1, deck2 := parse(input)
+	deck1, deck2 := parseInput(input)
 
 	log.Debugf("PLAYER 1: %v\n", deck1)
 	log.Debugf("PLAYER 2: %v\n", deck2)
@@ -51,7 +51,7 @@ func part1(input []string) (string, error) {
 var gameCount = 0
 
 func part2(input []string) (string, error) {
-	deck1, deck2 := parse(input)
+	deck1, deck2 := parseInput(input)
 
 	winner, points := playGame(deck1, deck2)
 
@@ -127,7 +127,7 @@ func playGame(deck1 []int, deck2 []int) (int, int) {
 	return winner, points
 }
 
-func parse(input []string) ([]int, []int) {
+func parseInput(input []string) ([]int, []int) {
 	var p1Cards []int
 
 	cards := make([]int, 0)

@@ -9,7 +9,7 @@ import (
 )
 
 func part1(input []string) (string, error) {
-	lines := parse(input)
+	lines := parseInput(input)
 
 	pointVals := map[string]int{
 		")": 3,
@@ -38,7 +38,7 @@ func part1(input []string) (string, error) {
 }
 
 func part2(input []string) (string, error) {
-	lines := parse(input)
+	lines := parseInput(input)
 
 	pointVals := map[string]int{
 		")": 1,
@@ -79,7 +79,7 @@ func part2(input []string) (string, error) {
 	return fmt.Sprintf("%d", middleScore), nil
 }
 
-func parse(input []string) [][]string {
+func parseInput(input []string) [][]string {
 	lines := make([][]string, 0, len(input))
 	for _, s := range input {
 		lines = append(lines, strings.Split(s, ""))

@@ -15,7 +15,7 @@ const NEW_FISH_TIMER = 8
 var cache = make(map[int]int)
 
 func part1(input []string) (string, error) {
-	fishList := parse(input)
+	fishList := parseInput(input)
 	result := len(fishList)
 	for _, n := range fishList {
 		result += beFruitfulAndMultiply(n, 0, 80)
@@ -24,7 +24,7 @@ func part1(input []string) (string, error) {
 }
 
 func part2(input []string) (string, error) {
-	fishList := parse(input)
+	fishList := parseInput(input)
 	result := len(fishList)
 	for _, n := range fishList {
 		result += beFruitfulAndMultiply(n, 0, 256)
@@ -52,7 +52,7 @@ func beFruitfulAndMultiply(num int, startDay int, totalDays int) int {
 	return count
 }
 
-func parse(input []string) []int {
+func parseInput(input []string) []int {
 	strs := strings.Split(input[0], ",")
 	nums := make([]int, 0, len(strs))
 	for _, s := range strs {

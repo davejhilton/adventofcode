@@ -11,7 +11,7 @@ import (
 )
 
 func part1(input []string) (string, error) {
-	lines, w, h := parse(input)
+	lines, w, h := parseInput(input)
 	g := NewGrid(w, h)
 	log.Debugf("Grid size (w x h): %d x %d\n", w, h)
 
@@ -26,7 +26,7 @@ func part1(input []string) (string, error) {
 }
 
 func part2(input []string) (string, error) {
-	lines, w, h := parse(input)
+	lines, w, h := parseInput(input)
 	g := NewGrid(w, h)
 	log.Debugf("Grid size (w x h): %d x %d\n", w, h)
 
@@ -40,7 +40,7 @@ func part2(input []string) (string, error) {
 	return fmt.Sprintf("%d", result), nil
 }
 
-func parse(input []string) ([]*line, int, int) {
+func parseInput(input []string) ([]*line, int, int) {
 	lines := make([]*line, 0, len(input))
 	maxX := 0
 	maxY := 0

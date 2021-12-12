@@ -24,7 +24,7 @@ func minDistance(positions []int, max int, adder func(n int) int) int {
 }
 
 func part1(input []string) (string, error) {
-	positions, max := parse(input)
+	positions, max := parseInput(input)
 	result := minDistance(positions, max, func(n int) int {
 		return n
 	})
@@ -32,14 +32,14 @@ func part1(input []string) (string, error) {
 }
 
 func part2(input []string) (string, error) {
-	positions, max := parse(input)
+	positions, max := parseInput(input)
 	result := minDistance(positions, max, func(n int) int {
 		return n * (n + 1) / 2
 	})
 	return fmt.Sprintf("%d", result), nil
 }
 
-func parse(input []string) ([]int, int) {
+func parseInput(input []string) ([]int, int) {
 	strs := strings.Split(input[0], ",")
 	nums := make([]int, 0, len(strs))
 	var max int

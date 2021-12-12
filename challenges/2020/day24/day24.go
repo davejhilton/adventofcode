@@ -8,7 +8,7 @@ import (
 )
 
 func part1(input []string) (string, error) {
-	paths := parse(input)
+	paths := parseInput(input)
 	blackTiles := make(map[string]bool)
 
 	for _, p := range paths {
@@ -31,7 +31,7 @@ func part1(input []string) (string, error) {
 }
 
 func part2(input []string) (string, error) {
-	paths := parse(input)
+	paths := parseInput(input)
 
 	// var minX, minY, minZ int = MAX_INT, MAX_INT, MAX_INT
 	// var maxX, maxY, maxZ int = MIN_INT, MIN_INT, MIN_INT
@@ -86,7 +86,7 @@ func part2(input []string) (string, error) {
 	return fmt.Sprintf("%d", len(blackTiles)), nil
 }
 
-func parse(input []string) []path {
+func parseInput(input []string) []path {
 	paths := make([]path, 0, len(input))
 	for _, s := range input {
 		p := make(path, 0)

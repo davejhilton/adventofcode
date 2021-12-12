@@ -43,7 +43,7 @@ func part1(input []string) (string, error) {
 }
 
 func arrangeTiles(input []string) *tile {
-	tiles := parse(input)
+	tiles := parseInput(input)
 
 	// FIRST, find all the "Neighbor" relations for every tile
 	changed := true
@@ -350,7 +350,7 @@ var (
 	}
 )
 
-func parse(input []string) map[int]*tile {
+func parseInput(input []string) map[int]*tile {
 	tiles := make(map[int]*tile)
 
 	var i int

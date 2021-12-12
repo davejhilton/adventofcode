@@ -9,7 +9,7 @@ import (
 )
 
 func part1(input []string) (string, error) {
-	pk1, pk2 := parse(input)
+	pk1, pk2 := parseInput(input)
 	_, _ = pk1, pk2
 
 	subject := 7
@@ -55,14 +55,14 @@ func transform(value, subject, divisor int) int {
 }
 
 func part2(input []string) (string, error) {
-	pk1, pk2 := parse(input)
+	pk1, pk2 := parseInput(input)
 	_, _ = pk1, pk2
 
 	log.Debugf("Result: %d\n", 0)
 	return fmt.Sprintf("%d", 0), nil
 }
 
-func parse(input []string) (int, int) {
+func parseInput(input []string) (int, int) {
 	n1, _ := strconv.Atoi(input[0])
 	n2, _ := strconv.Atoi(input[1])
 	return n1, n2

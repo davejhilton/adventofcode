@@ -10,7 +10,7 @@ import (
 )
 
 func part1(input []string) (string, error) {
-	vectors := parse(input)
+	vectors := parseInput(input)
 
 	depth, xPos := 0, 0
 
@@ -32,7 +32,7 @@ func part1(input []string) (string, error) {
 }
 
 func part2(input []string) (string, error) {
-	vectors := parse(input)
+	vectors := parseInput(input)
 	depth, xPos, aim := 0, 0, 0
 
 	for _, v := range vectors {
@@ -53,7 +53,7 @@ func part2(input []string) (string, error) {
 	return fmt.Sprintf("%d", result), nil
 }
 
-func parse(input []string) []*vector {
+func parseInput(input []string) []*vector {
 	vectors := make([]*vector, 0)
 	for _, line := range input {
 		parts := strings.SplitN(line, " ", 2)

@@ -11,7 +11,7 @@ import (
 )
 
 func part1(input []string) (string, error) {
-	nums, boards := parse(input)
+	nums, boards := parseInput(input)
 	winningBoard, lastCall := PlayBingo(nums, boards, true)
 
 	log.Printf("\n\n==================\n\n%s\n\n", winningBoard)
@@ -93,7 +93,7 @@ func CheckBingo(board *board, rowNum int, colNum int) bool {
 }
 
 func part2(input []string) (string, error) {
-	nums, boards := parse(input)
+	nums, boards := parseInput(input)
 	winningBoard, lastCall := PlayBingo(nums, boards, false)
 
 	log.Printf("\n\n==================\n\n%s\n\n", winningBoard)
@@ -114,7 +114,7 @@ func part2(input []string) (string, error) {
 
 var whitespace = regexp.MustCompile(`\s+`)
 
-func parse(input []string) ([]int, []*board) {
+func parseInput(input []string) ([]int, []*board) {
 	nums := make([]int, 0)
 	strNums := strings.Split(input[0], ",")
 	for _, s := range strNums {
