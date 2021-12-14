@@ -13,7 +13,7 @@ func part1(input []string) (string, error) {
 	coords, folds, w, h := parseInput(input)
 	p := NewPaper(w, h, &coords)
 	p.Fold(folds[0])
-	log.Debugln(p)
+	log.Debugf("-------------\n%s\n", p)
 	result := p.Count()
 	return fmt.Sprintf("%d", result), nil
 }
@@ -27,12 +27,12 @@ func part2(input []string) (string, error) {
 	return fmt.Sprintf("\n%s", p.String()), nil
 }
 
-func parseInput(input []string) ([]Coord, []FoldingPoint, int, int) {
-	coords := make([]Coord, 0)
+func parseInput(input []string) (coords []Coord, folds []FoldingPoint, w int, h int) {
+	coords = make([]Coord, 0)
 	i := 0
 
-	maxX := 0
-	maxY := 0
+	w = 0
+	h = 0
 	for ; i < len(input); i++ {
 		if input[i] == "" {
 			break
@@ -44,11 +44,13 @@ func parseInput(input []string) ([]Coord, []FoldingPoint, int, int) {
 			Col: x,
 			Row: y,
 		})
-		maxX = util.Max(maxX, x)
-		maxY = util.Max(maxY, y)
+		w = util.Max(w, x)
+		h = util.Max(h, y)
 	}
+	w += 1
+	h += 1
 
-	folds := make([]FoldingPoint, 0)
+	folds = make([]FoldingPoint, 0)
 	for i += 1; i < len(input); i++ {
 		parts := strings.Split(input[i], "=")
 		folds = append(folds, FoldingPoint{
@@ -57,7 +59,7 @@ func parseInput(input []string) ([]Coord, []FoldingPoint, int, int) {
 		})
 	}
 
-	return coords, folds, maxX + 1, maxY + 1
+	return
 }
 
 type Coord struct {
@@ -86,6 +88,9 @@ func NewPaper(w int, h int, coords *[]Coord) paper {
 type paper [][]bool
 
 func (p paper) String() string {
+	if len(p) > 100 || len(p[0]) > 100 {
+		return fmt.Sprintf("Paper - w: %d, h: %d", len(p[0]), len(p))
+	}
 	var sb strings.Builder
 	for r := range p {
 		if r != 0 {
@@ -115,31 +120,44 @@ func (p paper) Count() int {
 }
 
 func (p *paper) Fold(f FoldingPoint) {
+	log.Debugf("Folding at %s=%d\n", f.Axis, f.Value)
+	if f.Axis == "y" {
+		p.foldY(f.Value)
+	} else {
+		p.foldX(f.Value)
+	}
+}
+
+func (p *paper) foldX(xVal int) {
 	for r := range *p {
-		r2 := r
-		if f.Axis == "y" && r == f.Value {
-			continue
-		} else if f.Axis == "y" && r > f.Value {
-			r2 = f.Value - (r - f.Value)
-		}
 		for c := range (*p)[r] {
 			c2 := c
-			if f.Axis == "x" && c == f.Value {
+			if c == xVal {
 				continue
-			} else if f.Axis == "x" && c > f.Value {
-				c2 = f.Value - (c - f.Value)
+			} else if c > xVal {
+				c2 = xVal - (c - xVal)
 			}
-			(*p)[r2][c2] = (*p)[r][c] || (*p)[r2][c2]
+			(*p)[r][c2] = (*p)[r][c] || (*p)[r][c2]
 		}
 	}
+	for r := range *p {
+		(*p)[r] = (*p)[r][0:xVal]
+	}
+}
 
-	if f.Axis == "x" {
-		for r := range *p {
-			(*p)[r] = (*p)[r][:f.Value]
+func (p *paper) foldY(yVal int) {
+	for r := range *p {
+		r2 := r
+		if r == yVal {
+			continue
+		} else if r > yVal {
+			r2 = yVal - (r - yVal)
 		}
-	} else {
-		*p = (*p)[:f.Value]
+		for c := range (*p)[r] {
+			(*p)[r2][c] = (*p)[r][c] || (*p)[r2][c]
+		}
 	}
+	*p = (*p)[0:yVal]
 }
 
 func init() {
