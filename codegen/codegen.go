@@ -18,10 +18,15 @@ var insertPattern = regexp.MustCompile(`.*CODEGEN: INSERT HERE*`)
 
 func GenerateChallengeTemplate(year int, day int) error {
 
-	dirPath := fmt.Sprintf("./challenges/%d/day%.2d", year, day)
-	if err := createDirectory(dirPath); err != nil {
+	yearPath := fmt.Sprintf("./challenges/%d", year)
+	if err := createDirectory(yearPath, true); err != nil {
 		return err
 	}
+	dirPath := fmt.Sprintf("%s/day%.2d", yearPath, day)
+	if err := createDirectory(dirPath, false); err != nil {
+		return err
+	}
+	fmt.Printf("%s%s\n", log.Colorize("Created challenge dir:", log.Green, msgWidth), dirPath)
 
 	goFilePath := fmt.Sprintf("%s/day%.2d.go", dirPath, day)
 	if err := generateCodeFile(goFilePath, year, day); err != nil {
@@ -46,15 +51,16 @@ func GenerateChallengeTemplate(year int, day int) error {
 	return nil
 }
 
-func createDirectory(dirPath string) error {
+func createDirectory(dirPath string, silent bool) error {
 	err := os.Mkdir(dirPath, 0755)
 	if errors.Is(err, os.ErrExist) {
-		fmt.Printf("%s%s\n", log.Colorize("Challenge dir already exists:", log.Yellow, msgWidth), dirPath)
+		if !silent {
+			fmt.Printf("%s%s\n", log.Colorize("Dir already exists:", log.Yellow, msgWidth), dirPath)
+		}
 		return nil
 	} else if err != nil {
 		return err
 	}
-	fmt.Printf("%s%s\n", log.Colorize("Created challenge dir:", log.Green, msgWidth), dirPath)
 	return nil
 }
 
