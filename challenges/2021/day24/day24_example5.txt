@@ -1,0 +1,17 @@
+inp w
+add y w
+add y 8
+add z y
+add x 1
+inp w
+mul y 0
+add y w
+add y 16
+mul z 26
+add z y
+inp w
+mul y 0
+add y w
+add y 4
+mul z 26
+add z y

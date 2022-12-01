@@ -42,5 +42,16 @@ import (
 	_ "github.com/davejhilton/adventofcode/challenges/2021/day12"
 	_ "github.com/davejhilton/adventofcode/challenges/2021/day13"
 	_ "github.com/davejhilton/adventofcode/challenges/2021/day14"
+	_ "github.com/davejhilton/adventofcode/challenges/2021/day15"
+	_ "github.com/davejhilton/adventofcode/challenges/2021/day16"
+	_ "github.com/davejhilton/adventofcode/challenges/2021/day17"
+	_ "github.com/davejhilton/adventofcode/challenges/2021/day18"
+	_ "github.com/davejhilton/adventofcode/challenges/2021/day19"
+	_ "github.com/davejhilton/adventofcode/challenges/2021/day20"
+	_ "github.com/davejhilton/adventofcode/challenges/2021/day21"
+	_ "github.com/davejhilton/adventofcode/challenges/2021/day22"
+	_ "github.com/davejhilton/adventofcode/challenges/2021/day23"
+	_ "github.com/davejhilton/adventofcode/challenges/2021/day24"
+	_ "github.com/davejhilton/adventofcode/challenges/2021/day25"
 	// CODEGEN: INSERT HERE
 )
