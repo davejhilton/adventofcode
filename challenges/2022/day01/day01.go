@@ -2,31 +2,33 @@ package aoc2022_day1
 
 import (
 	"fmt"
-	"strconv"
 
 	"github.com/davejhilton/adventofcode/challenges"
 	"github.com/davejhilton/adventofcode/log"
+	"github.com/davejhilton/adventofcode/util"
 )
 
 func part1(input []string) (string, error) {
-	groups := parseInput(input)
+	parsed := parseInput(input)
+	log.Debugf("Parsed Input:\n%v\n", parsed)
+
 	max := 0
-	for _, group := range groups {
+	for _, group := range parsed {
 		calories := 0
 		for _, cals := range group {
 			calories += cals
 		}
-		if calories > max {
-			max = calories
-		}
+		max = util.Max(max, calories)
 	}
 	return fmt.Sprintf("%d", max), nil
 }
 
 func part2(input []string) (string, error) {
-	groups := parseInput(input)
+	parsed := parseInput(input)
+	log.Debugf("Parsed Input:\n%v\n", parsed)
+
 	top3 := append(make([]int, 0), 0, 0, 0)
-	for _, group := range groups {
+	for _, group := range parsed {
 		calories := 0
 		for _, cals := range group {
 			calories += cals
@@ -56,12 +58,7 @@ func parseInput(input []string) [][]int {
 			nums = make([]int, 0)
 			continue
 		}
-		if i, err := strconv.Atoi(v); err == nil {
-			nums = append(nums, i)
-		} else {
-			log.Printf("unable to parse input - '%s' is not a number", v)
-			return nil
-		}
+		nums = append(nums, util.Atoi(v))
 	}
 	return append(groups, nums)
 }
