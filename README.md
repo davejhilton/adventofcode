@@ -1,6 +1,6 @@
-# Advent of Code 2020 - 2021
+# Advent of Code 2020 - 2022
 
-This is my attempt at following along with the [Advent of Code](https://adventofcode.com) challenges for 2020 and 2021, using Golang.
+This is my attempt at following along with the [Advent of Code](https://adventofcode.com) challenges for 2020 - 2022, using Golang.
 
 
 ## To run the challenges:
