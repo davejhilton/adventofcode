@@ -80,13 +80,13 @@ func generateCodeFile(filePath string, year int, day int) error {
 	}
 	defer writer.Close()
 
-	tpl, err := template.New("NewChallenge").ParseFiles("codegen/challenge-template.tpl")
+	tpl, err := template.New("NewChallenge").ParseFiles("codegen/challenge-template.go.tmpl")
 	if err != nil {
 		fmt.Printf("%s %s\n", log.Colorize("ERROR rendering template:", log.Red, 0), err)
 		return err
 	}
 
-	tpl.ExecuteTemplate(writer, "challenge-template.tpl", &map[string]int{
+	tpl.ExecuteTemplate(writer, "challenge-template.go.tmpl", &map[string]int{
 		"Year": year,
 		"Day":  day,
 	})
