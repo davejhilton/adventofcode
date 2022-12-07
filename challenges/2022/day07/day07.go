@@ -118,14 +118,14 @@ func parseInput(input []string) *dir {
 	return root
 }
 
-type node interface {
-	Type() string
-	Name() string
-	Size() int
-	Path() string
-	Parent() *dir
-	String() string
+func init() {
+	challenges.RegisterChallengeFunc(2022, 7, 1, "day07.txt", part1)
+	challenges.RegisterChallengeFunc(2022, 7, 2, "day07.txt", part2)
 }
+
+// ===========================
+//      DIRECTORY STRUCT
+// ===========================
 
 type dir struct {
 	name     string
@@ -182,6 +182,10 @@ func (d *dir) AddChild(n node) {
 	}
 }
 
+// ===========================
+//         FILE STRUCT
+// ===========================
+
 type file struct {
 	name   string
 	path   string
@@ -213,7 +217,15 @@ func (f file) String() string {
 	return fmt.Sprintf("%s (file, size=%d)", f.name, f.size)
 }
 
-func init() {
-	challenges.RegisterChallengeFunc(2022, 7, 1, "day07.txt", part1)
-	challenges.RegisterChallengeFunc(2022, 7, 2, "day07.txt", part2)
+// =====================================
+//      FILESYSTEM NODE INTERFACE
+// =====================================
+
+type node interface {
+	Type() string
+	Name() string
+	Size() int
+	Path() string
+	Parent() *dir
+	String() string
 }
