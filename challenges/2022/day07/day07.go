@@ -28,8 +28,8 @@ func part1(input []string) (string, error) {
 			total += d.Size()
 		}
 		for _, n := range d.contents {
-			if n.Type() == "dir" {
-				total += sumSizes(n.(*dir), threshold)
+			if d, ok := n.(*dir); ok {
+				total += sumSizes(d, threshold)
 			}
 		}
 		return total
@@ -53,8 +53,8 @@ func part2(input []string) (string, error) {
 				smallest = util.Min(smallest, size)
 			}
 			for _, n := range d.contents {
-				if n.Type() == "dir" {
-					smallest = findDirToDelete(n.(*dir), min, smallest)
+				if d, ok := n.(*dir); ok {
+					smallest = findDirToDelete(d, min, smallest)
 				}
 			}
 		}
@@ -72,7 +72,6 @@ func part2(input []string) (string, error) {
 func parseInput(input []string) *dir {
 	root := &dir{
 		name:     "/",
-		path:     "/",
 		contents: make(map[string]node, 0),
 		parent:   nil,
 	}
@@ -87,7 +86,6 @@ func parseInput(input []string) *dir {
 			name := matches[1]
 			cwd.AddChild(&dir{
 				name:     name,
-				path:     fmt.Sprintf("%s/%s", cwd.Path(), name),
 				contents: make(map[string]node),
 				parent:   cwd,
 			})
@@ -99,17 +97,12 @@ func parseInput(input []string) *dir {
 			} else if name == ".." {
 				cwd = cwd.Parent()
 			} else {
-				if d, ok := cwd.contents[name]; ok && d.Type() == "dir" {
-					cwd = cwd.contents[name].(*dir)
-				} else {
-					fmt.Println(log.Colorize(fmt.Sprintf("ERROR: Cannot cd into directory %s! Does not exist or is not a directory! (cwd: %s)", name, cwd.Path()), log.Red, 0))
-				}
+				cwd = cwd.contents[name].(*dir)
 			}
 		default:
 			matches := file_regex.FindStringSubmatch(s)
 			cwd.AddChild(&file{
 				name:   matches[2],
-				path:   fmt.Sprintf("%s/%s", cwd.Path(), matches[2]),
 				size:   util.Atoi(matches[1]),
 				parent: cwd,
 			})
@@ -129,13 +122,8 @@ func init() {
 
 type dir struct {
 	name     string
-	path     string
 	contents map[string]node
 	parent   *dir
-}
-
-func (d dir) Type() string {
-	return "dir"
 }
 
 func (d dir) Name() string {
@@ -150,10 +138,6 @@ func (d dir) Size() int {
 	return size
 }
 
-func (d dir) Path() string {
-	return d.path
-}
-
 func (d dir) Parent() *dir {
 	return d.parent
 }
@@ -164,13 +148,18 @@ func (d dir) String() string {
 
 func (d dir) TreeString(depth int) string {
 	var b strings.Builder
-	pad := strings.Repeat("  ", depth)
-	b.WriteString(fmt.Sprintf("%s- %s", pad, d))
+	pad := " "
+	childPad := " └─── "
+	if depth != 0 {
+		pad = fmt.Sprintf(" %s└─── ", strings.Repeat("     ", depth-1))
+		childPad = fmt.Sprintf("     %s", pad)
+	}
+	b.WriteString(fmt.Sprintf("%s%s", pad, d))
 	for _, n := range d.contents {
-		if n.Type() == "file" {
-			b.WriteString(fmt.Sprintf("\n  %s- %s", pad, n))
+		if d, ok := n.(*dir); ok {
+			b.WriteString(fmt.Sprintf("\n%s", d.TreeString(depth+1)))
 		} else {
-			b.WriteString(fmt.Sprintf("\n%s", n.(*dir).TreeString(depth+1)))
+			b.WriteString(fmt.Sprintf("\n%s%s", childPad, n))
 		}
 	}
 	return b.String()
@@ -188,13 +177,8 @@ func (d *dir) AddChild(n node) {
 
 type file struct {
 	name   string
-	path   string
 	size   int
 	parent *dir
-}
-
-func (f file) Type() string {
-	return "file"
 }
 
 func (f file) Name() string {
@@ -203,10 +187,6 @@ func (f file) Name() string {
 
 func (f file) Size() int {
 	return f.size
-}
-
-func (f file) Path() string {
-	return f.path
 }
 
 func (f file) Parent() *dir {
@@ -222,10 +202,8 @@ func (f file) String() string {
 // =====================================
 
 type node interface {
-	Type() string
 	Name() string
 	Size() int
-	Path() string
 	Parent() *dir
 	String() string
 }
