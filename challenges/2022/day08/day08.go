@@ -9,6 +9,19 @@ import (
 	"github.com/davejhilton/adventofcode/util"
 )
 
+type forestGrid [][]int
+
+func (f forestGrid) String() string {
+	var b strings.Builder
+	for x := range f {
+		for y := range f[x] {
+			b.WriteString(fmt.Sprintf("%d", f[x][y]))
+		}
+		b.WriteString("\n")
+	}
+	return b.String()
+}
+
 func part1(input []string) (string, error) {
 	grid := parseInput(input)
 	log.Debugf("Parsed Input:\n%v\n", grid)
@@ -32,7 +45,7 @@ func part1(input []string) (string, error) {
 		b.WriteString("\n")
 	}
 
-	log.Debugln(b.String())
+	log.Debugf("\n%s\n", b.String()) // print colored debug output
 
 	return fmt.Sprintf("%d", result), nil
 }
@@ -55,8 +68,8 @@ func part2(input []string) (string, error) {
 	return fmt.Sprintf("%d", result), nil
 }
 
-func parseInput(input []string) [][]int {
-	nums := make([][]int, 0, len(input))
+func parseInput(input []string) forestGrid {
+	nums := make(forestGrid, 0, len(input))
 	for _, s := range input {
 		row := make([]int, 0, len(s))
 		for _, h := range s {
