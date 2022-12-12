@@ -65,5 +65,6 @@ import (
 	_ "github.com/davejhilton/adventofcode/challenges/2022/day09"
 	_ "github.com/davejhilton/adventofcode/challenges/2022/day10"
 	_ "github.com/davejhilton/adventofcode/challenges/2022/day11"
+	_ "github.com/davejhilton/adventofcode/challenges/2022/day12"
 	// CODEGEN: INSERT HERE
 )
