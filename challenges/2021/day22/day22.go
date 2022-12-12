@@ -272,7 +272,7 @@ func addRange(rN *Range, ranges *[]*Range) {
 
 			// 3. list should have: [... , r2, joint, r2_after ...]
 			if rN.Dimension == "x" {
-				log.Debugf("INSERTING INTO LIST AT %d (AND %D) (FULL INNER)\n", i+1, i+2)
+				log.Debugf("INSERTING INTO LIST AT %d (AND %x) (FULL INNER)\n", i+1, i+2)
 			}
 			insertAtIndex(ranges, i+1, joint)
 			insertAtIndex(ranges, i+2, r2_after)

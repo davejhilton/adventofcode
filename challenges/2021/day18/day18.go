@@ -269,7 +269,7 @@ func parseNumber(s string) (*Number, string) {
 		log.Debugf("Parsing empty string.... %s\n", s)
 		return nil, ""
 	} else if len(runes) == 0 {
-		log.Debugf("Parsing empty runes?.... '%s'\n", len(runes), s)
+		log.Debugf("Parsing empty runes?.... %d - '%s'\n", len(runes), s)
 	}
 	if runes[0] != '[' {
 		numStr := string(runes[0])

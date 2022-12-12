@@ -48,14 +48,14 @@ func day1_part2(input []string) (string, error) {
 			p1, p2 := nums[i-1], nums[i-2]
 			sum := p1 + p2 + depth
 			if i == 2 {
-				log.Debugf("%s: %d (N/A - no previous sum)\n", label, sum)
+				log.Debugf("%v: %d (N/A - no previous sum)\n", label, sum)
 			} else if sum > prevSum {
-				log.Debugf("%s: %d %s\n", label, sum, log.Colorize("(increases)", log.Green, 0))
+				log.Debugf("%v: %d %s\n", label, sum, log.Colorize("(increases)", log.Green, 0))
 				increases++
 			} else if sum < prevSum {
-				log.Debugf("%s: %d %s\n", label, sum, log.Colorize("(decreases)", log.Red, 0))
+				log.Debugf("%v: %d %s\n", label, sum, log.Colorize("(decreases)", log.Red, 0))
 			} else {
-				log.Debugf("%s: %d %s\n", label, sum, log.Colorize("(no change)", log.Yellow, 0))
+				log.Debugf("%v: %d %s\n", label, sum, log.Colorize("(no change)", log.Yellow, 0))
 			}
 			label = label + 1
 			prevSum = sum

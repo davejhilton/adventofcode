@@ -1,13 +1,16 @@
 package util
 
 import (
-	"math"
 	"strconv"
 )
 
-func Min(ints ...int) int {
-	min := math.MaxInt
-	for _, n := range ints {
+type Numeric interface {
+	~int | ~int8 | ~int16 | ~int32 | ~int64 | ~float32 | ~float64
+}
+
+func Min[T Numeric](nums ...T) T {
+	var min T
+	for _, n := range nums {
 		if n < min {
 			min = n
 		}
@@ -15,8 +18,8 @@ func Min(ints ...int) int {
 	return min
 }
 
-func Max(nums ...int) int {
-	max := math.MinInt
+func Max[T Numeric](nums ...T) T {
+	var max T
 	for _, n := range nums {
 		if n > max {
 			max = n
@@ -25,7 +28,7 @@ func Max(nums ...int) int {
 	return max
 }
 
-func Abs(n int) int {
+func Abs[T Numeric](n T) T {
 	if n < 0 {
 		return n * -1
 	}

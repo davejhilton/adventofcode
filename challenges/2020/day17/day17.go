@@ -53,9 +53,7 @@ func part1(input []string) (string, error) {
 			zSpace[z] = make([][]value, size)
 			for y, xSpace := range ySpace {
 				zSpace[z][y] = make([]value, size)
-				for x, active := range xSpace {
-					zSpace[z][y][x] = active
-				}
+				copy(zSpace[z][y], xSpace)
 			}
 		}
 

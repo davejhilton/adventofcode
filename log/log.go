@@ -35,11 +35,12 @@ func Print(msg string) {
 	fmt.Print(msg)
 }
 
-func Printf(msg string, a ...interface{}) {
+func Printf(msg string, a ...any) {
 	fmt.Printf(msg, a...)
 }
 
-func Println(a ...interface{}) {
+func Println(a ...any) {
+	a = append(a, "")
 	fmt.Println(a...)
 }
 
@@ -49,13 +50,13 @@ func Debug(msg string) {
 	}
 }
 
-func Debugf(msg string, a ...interface{}) {
+func Debugf(msg string, a ...any) {
 	if enableDebugMessages {
 		Printf(msg, a...)
 	}
 }
 
-func Debugln(a ...interface{}) {
+func Debugln(a ...any) {
 	if enableDebugMessages {
 		Println(a...)
 	}
