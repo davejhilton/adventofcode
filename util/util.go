@@ -1,6 +1,7 @@
 package util
 
 import (
+	"sort"
 	"strconv"
 )
 
@@ -9,23 +10,23 @@ type Numeric interface {
 }
 
 func Min[T Numeric](nums ...T) T {
-	var min T
-	for _, n := range nums {
-		if n < min {
-			min = n
-		}
+	sort.Slice(nums, func(i, j int) bool {
+		return nums[i] < nums[j]
+	})
+	if len(nums) > 0 {
+		return nums[0]
 	}
-	return min
+	return 0
 }
 
 func Max[T Numeric](nums ...T) T {
-	var max T
-	for _, n := range nums {
-		if n > max {
-			max = n
-		}
+	sort.Slice(nums, func(i, j int) bool {
+		return nums[i] < nums[j]
+	})
+	if len(nums) > 0 {
+		return nums[len(nums)-1]
 	}
-	return max
+	return 0
 }
 
 func Abs[T Numeric](n T) T {
