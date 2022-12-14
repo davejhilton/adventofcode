@@ -18,7 +18,7 @@ const (
 
 func part1(input []string) (string, error) {
 	paths, minPoint, maxPoint := parseInput(input)
-	grid := NewSparseGrid()
+	grid := NewGrid()
 
 	for _, p := range paths {
 		grid.AddPath(p)
@@ -59,7 +59,7 @@ func part1(input []string) (string, error) {
 
 func part2(input []string) (string, error) {
 	paths, _, maxPoint := parseInput(input)
-	grid := NewSparseGrid()
+	grid := NewGrid()
 
 	for _, p := range paths {
 		grid.AddPath(p)
@@ -145,7 +145,7 @@ type Grid struct {
 	MaxY   int
 }
 
-func NewSparseGrid() *Grid {
+func NewGrid() *Grid {
 	return &Grid{
 		points: make(map[int]map[int]int),
 		MinX:   math.MaxInt,
