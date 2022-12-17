@@ -1,6 +1,7 @@
 package util
 
 import (
+	"encoding/json"
 	"sort"
 	"strconv"
 )
@@ -39,4 +40,22 @@ func Abs[T Numeric](n T) T {
 func Atoi(str string) int {
 	n, _ := strconv.Atoi(str)
 	return n
+}
+
+func Keys[K comparable, V any](m map[K]V) []K {
+	keys := make([]K, 0, len(m))
+	for k := range m {
+		keys = append(keys, k)
+	}
+	return keys
+}
+
+func ToJSON(v any, pretty bool) string {
+	var j []byte
+	if pretty {
+		j, _ = json.MarshalIndent(v, "", "  ")
+	} else {
+		j, _ = json.Marshal(v)
+	}
+	return string(j)
 }
