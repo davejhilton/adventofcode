@@ -1,6 +1,7 @@
 package log
 
 import (
+	"encoding/json"
 	"fmt"
 )
 
@@ -40,8 +41,22 @@ func Printf(msg string, a ...any) {
 }
 
 func Println(a ...any) {
-	a = append(a, "")
+	a = append(a, "") // stops go vet from complaining about trailing \n
 	fmt.Println(a...)
+}
+
+func PrintColor(v any, c Color) {
+	Println(Colorize(v, c, 0))
+}
+
+func JSON(v any, pretty bool) {
+	var j []byte
+	if pretty {
+		j, _ = json.MarshalIndent(v, "", "  ")
+	} else {
+		j, _ = json.Marshal(v)
+	}
+	Println(j)
 }
 
 func Debug(msg string) {
@@ -62,7 +77,19 @@ func Debugln(a ...any) {
 	}
 }
 
-func Colorize(v interface{}, color Color, width int) string {
+func DebugJSON(v any, pretty bool) {
+	if enableDebugMessages {
+		JSON(v, pretty)
+	}
+}
+
+func DebugColor(v any, c Color) {
+	if enableDebugMessages {
+		PrintColor(v, c)
+	}
+}
+
+func Colorize(v any, color Color, width int) string {
 	result := ""
 	switch v := v.(type) {
 	case string:

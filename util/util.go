@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"sort"
 	"strconv"
+	"strings"
 )
 
 type Numeric interface {
@@ -42,6 +43,15 @@ func Atoi(str string) int {
 	return n
 }
 
+func AtoiSplit(str, sep string) (nums []int) {
+	parts := strings.Split(str, sep)
+	nums = make([]int, 0, len(parts))
+	for _, p := range parts {
+		nums = append(nums, Atoi(p))
+	}
+	return nums
+}
+
 func Keys[K comparable, V any](m map[K]V) []K {
 	keys := make([]K, 0, len(m))
 	for k := range m {
@@ -58,4 +68,14 @@ func ToJSON(v any, pretty bool) string {
 		j, _ = json.Marshal(v)
 	}
 	return string(j)
+}
+
+func Filter[T any](s []T, f func(T) bool) []T {
+	new := make([]T, 0)
+	for _, v := range s {
+		if f(v) {
+			new = append(new, v)
+		}
+	}
+	return new
 }
