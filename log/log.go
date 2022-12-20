@@ -56,7 +56,7 @@ func JSON(v any, pretty bool) {
 	} else {
 		j, _ = json.Marshal(v)
 	}
-	Println(j)
+	Println(string(j))
 }
 
 func Debug(msg string) {
