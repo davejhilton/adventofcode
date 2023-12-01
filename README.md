@@ -1,11 +1,11 @@
-# Advent of Code 2020 - 2022
+# Advent of Code 2020 - 2023
 
-This is my attempt at following along with the [Advent of Code](https://adventofcode.com) challenges for 2020 - 2022, using Golang.
+This is my attempt at following along with the [Advent of Code](https://adventofcode.com) challenges for 2020 - 2023, using Golang.
 
 
 ## To run the challenges:
 
-- install golang 1.19 or later
+- install golang 1.21 or later
 - clone this repo
 - `cd` into the root of the repo
 - run `go run main.go <year> <day> <part>`, where `<year>` is 2020 or 2021 (etc), `<day>` is the day number, and `<part>` is which challenge number for that day.
