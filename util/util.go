@@ -2,6 +2,7 @@ package util
 
 import (
 	"encoding/json"
+	"regexp"
 	"sort"
 	"strconv"
 	"strings"
@@ -48,6 +49,16 @@ func AtoiSplit(str, sep string) (nums []int) {
 	nums = make([]int, 0, len(parts))
 	for _, p := range parts {
 		nums = append(nums, Atoi(p))
+	}
+	return nums
+}
+
+var numRegex = regexp.MustCompile(`\d+`)
+
+func ExtractNumbers(s string) []int {
+	nums := make([]int, 0)
+	for _, n := range numRegex.FindAllString(s, -1) {
+		nums = append(nums, Atoi(n))
 	}
 	return nums
 }
