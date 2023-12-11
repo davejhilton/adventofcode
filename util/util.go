@@ -90,3 +90,12 @@ func Filter[T any](s []T, f func(T) bool) []T {
 	}
 	return new
 }
+
+func Contains[T comparable](s []T, v T) bool {
+	for _, x := range s {
+		if x == v {
+			return true
+		}
+	}
+	return false
+}
