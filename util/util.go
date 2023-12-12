@@ -2,6 +2,7 @@ package util
 
 import (
 	"encoding/json"
+	"fmt"
 	"regexp"
 	"sort"
 	"strconv"
@@ -98,4 +99,23 @@ func Contains[T comparable](s []T, v T) bool {
 		}
 	}
 	return false
+}
+
+func Sum[T Numeric](s []T) T {
+	var sum T
+	for _, x := range s {
+		sum += x
+	}
+	return sum
+}
+
+func JoinInts(s []int, sep string) string {
+	var sb strings.Builder
+	for i, n := range s {
+		if i > 0 {
+			sb.WriteString(sep)
+		}
+		sb.WriteString(fmt.Sprintf("%d", n))
+	}
+	return sb.String()
 }
