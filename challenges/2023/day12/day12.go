@@ -83,7 +83,7 @@ func countPossibilities(sr *SpringRecord) int {
 		return countPossibilitiesMemoized(&SpringRecord{sr.Springs[1:], sr.Counts})
 	case '#':
 		currentCount := sr.Counts[0]
-		for i := 0; i < currentCount; i++ {
+		for i := 1; i < currentCount; i++ {
 			if i >= len(sr.Springs) || sr.Springs[i] == '.' {
 				return 0
 			}
