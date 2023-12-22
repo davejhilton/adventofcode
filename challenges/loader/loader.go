@@ -79,6 +79,7 @@ import (
 	_ "github.com/davejhilton/adventofcode/challenges/2022/day23"
 	_ "github.com/davejhilton/adventofcode/challenges/2022/day24"
 	_ "github.com/davejhilton/adventofcode/challenges/2022/day25"
+
 	_ "github.com/davejhilton/adventofcode/challenges/2023/day01"
 	_ "github.com/davejhilton/adventofcode/challenges/2023/day02"
 	_ "github.com/davejhilton/adventofcode/challenges/2023/day03"
@@ -91,9 +92,15 @@ import (
 	_ "github.com/davejhilton/adventofcode/challenges/2023/day10"
 	_ "github.com/davejhilton/adventofcode/challenges/2023/day11"
 	_ "github.com/davejhilton/adventofcode/challenges/2023/day12"
-	_ "github.com/davejhilton/adventofcode/challenges/2023/day14"
 	_ "github.com/davejhilton/adventofcode/challenges/2023/day13"
+	_ "github.com/davejhilton/adventofcode/challenges/2023/day14"
 	_ "github.com/davejhilton/adventofcode/challenges/2023/day15"
 	_ "github.com/davejhilton/adventofcode/challenges/2023/day16"
+	_ "github.com/davejhilton/adventofcode/challenges/2023/day17"
+	_ "github.com/davejhilton/adventofcode/challenges/2023/day18"
+	_ "github.com/davejhilton/adventofcode/challenges/2023/day19"
+	_ "github.com/davejhilton/adventofcode/challenges/2023/day20"
+	_ "github.com/davejhilton/adventofcode/challenges/2023/day21"
+	_ "github.com/davejhilton/adventofcode/challenges/2023/day22"
 	// CODEGEN: INSERT HERE
 )

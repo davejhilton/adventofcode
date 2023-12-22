@@ -10,7 +10,15 @@ import (
 )
 
 type Numeric interface {
-	~int | ~int8 | ~int16 | ~int32 | ~int64 | ~float32 | ~float64
+	~float32 | ~float64 | ~int | ~int8 | ~int16 | ~int32 | ~int64 | ~uint | ~uint8 | ~uint16 | ~uint32 | ~uint64
+}
+
+type SignedNumeric interface {
+	~float32 | ~float64 | ~int | ~int8 | ~int16 | ~int32 | ~int64
+}
+
+type IntLike interface {
+	~int | ~int8 | ~int16 | ~int32 | ~int64 | ~uint | ~uint8 | ~uint16 | ~uint32 | ~uint64
 }
 
 func Min[T Numeric](nums ...T) T {
@@ -33,7 +41,7 @@ func Max[T Numeric](nums ...T) T {
 	return 0
 }
 
-func Abs[T Numeric](n T) T {
+func Abs[T SignedNumeric](n T) T {
 	if n < 0 {
 		return n * -1
 	}
@@ -118,4 +126,79 @@ func JoinInts(s []int, sep string) string {
 		sb.WriteString(fmt.Sprintf("%d", n))
 	}
 	return sb.String()
+}
+
+func GCD[T IntLike](a, b T) T {
+	// Calculate the greatest common divisor (gcd) using the Euclidean algorithm
+	// https://en.wikipedia.org/wiki/Euclidean_algorithm
+	var temp T
+	for b != 0 {
+		temp = b
+		b = a % b
+		a = temp
+	}
+	return a
+}
+
+func LCM[T IntLike](a, b T) T {
+	return a * b / GCD(a, b)
+}
+
+type Grid [][]string
+
+func (g Grid) String() string {
+	var sb strings.Builder
+	for _, row := range g {
+		sb.WriteString(fmt.Sprintf("%s\n", strings.Join(row, "")))
+	}
+	return sb.String()
+}
+
+type IntGrid [][]int
+
+func (ig IntGrid) String() string {
+	var sb strings.Builder
+	for _, row := range ig {
+		for _, n := range row {
+			sb.WriteString(fmt.Sprintf("%d", n))
+		}
+		sb.WriteString("\n")
+	}
+	return sb.String()
+}
+
+type Coord struct {
+	Row       int
+	Col       int
+	IntVal    int
+	StringVal string
+}
+
+func (c Coord) String() string {
+	return fmt.Sprintf("(%d,%d)", c.Row, c.Col)
+}
+
+func (c Coord) ManhattanDistance(other Coord) int {
+	return Abs(c.Row-other.Row) + Abs(c.Col-other.Col)
+}
+
+func ShoelaceArea(coords []Coord) int {
+	// https://en.wikipedia.org/wiki/Shoelace_formula
+	// https://www.mathopenref.com/coordpolygonarea.htmll
+
+	var sum int
+	for i := 0; i < len(coords)-1; i++ {
+		sum += coords[i].Col*coords[i+1].Row - coords[i+1].Col*coords[i].Row
+	}
+
+	return sum / 2
+}
+
+func PicksTheorem(innerArea int, perimeterArea int) int {
+	// https://en.wikipedia.org/wiki/Pick%27s_theorem
+	// https://www.mathopenref.com/polygonirregulararea.html
+
+	// A = i + b/2 - 1
+	// i = A - b/2 + 1
+	return innerArea - (perimeterArea / 2) + 1
 }

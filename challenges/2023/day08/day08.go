@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"github.com/davejhilton/adventofcode/challenges"
+	"github.com/davejhilton/adventofcode/util"
 )
 
 type Node struct {
@@ -36,7 +37,7 @@ func part2(input []string) (string, error) {
 	var minSteps uint64 = 1
 	for _, node := range nodes {
 		if node.Name[2] == 'A' {
-			minSteps = lcm(minSteps, node.StepsToZ(instructions, 0))
+			minSteps = util.LCM(minSteps, node.StepsToZ(instructions, 0))
 		}
 	}
 
@@ -90,22 +91,6 @@ func (n *Node) StepsToZ(instructions []string, i int) uint64 {
 	steps = 1 + nextNode.StepsToZ(instructions, (i+1)%len(instructions))
 	memo[key] = &steps
 	return steps
-}
-
-// Calculate the greatest common divisor (gcd) using the Euclidean algorithm
-// https://en.wikipedia.org/wiki/Euclidean_algorithm
-func gcd(a, b uint64) uint64 {
-	var temp uint64
-	for b != 0 {
-		temp = b
-		b = a % b
-		a = temp
-	}
-	return a
-}
-
-func lcm(a, b uint64) uint64 {
-	return a * b / gcd(a, b)
 }
 
 func init() {
